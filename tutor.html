@@ -736,7 +736,7 @@
         { key: 'is_active', label: 'Status', type: 'active_badge', sticky: false },
         { key: 'max_load', label: 'Max Load', type: 'number', sticky: false },
         { key: 'active_timesheet_count', label: 'Active Timesheets', type: 'number', sticky: false },
-        { key: 'is_updated_last_friday', label: 'Updated Last Friday', type: 'updated_badge', sticky: false },
+        { key: 'is_updated_last_sunday', label: 'Updated Last Sunday', type: 'updated_badge', sticky: false },
         { key: 'updated_at', label: 'Last Updated', type: 'date', sticky: false },
       ],
 
@@ -744,7 +744,7 @@
 
       KPI_FILTER_LABELS: {
         active_tutors: 'Active Tutors',
-        updated_tutors: 'Updated Last Friday',
+        updated_tutors: 'Updated Last Sunday',
         timesheet_tutors: 'Has Timesheets',
       },
 
@@ -921,7 +921,7 @@
           if (!name) return;
           allNames.add(name);
           if (Number(r.is_active) === 1) activeNames.add(name);
-          if (Number(r.is_updated_last_friday) === 1) updatedNames.add(name);
+          if (Number(r.is_updated_last_sunday) === 1) updatedNames.add(name);
           if (Utils.toNum(r.active_timesheet_count) > 0) timesheetNames.add(name);
           totalTimesheets += Utils.toNum(r.active_timesheet_count);
         });
@@ -1003,7 +1003,7 @@
       const renderKPIs = (m) => {
         const tooltips = {
           active_tutors: 'Number of tutors currently marked as active — those who are available and assigned to programs.',
-          updated_tutors: 'Number of tutors who updated their timesheet last Friday — indicating recent activity.',
+          updated_tutors: 'Number of tutors who updated their timesheet last Sunday — indicating recent activity.',
           timesheet_tutors: 'Number of tutors who have at least one active timesheet entry — tutors currently engaged with students.',
         };
 
@@ -1022,7 +1022,7 @@
             barColor: 'var(--success)', iconBg: 'var(--success-bg)', iconColor: 'var(--success)',
           },
           {
-            key: 'updated_tutors', label: 'Updated Last Friday', val: m.updatedTutors,
+            key: 'updated_tutors', label: 'Updated Last Sunday', val: m.updatedTutors,
             sub: `${m.updatedRate.toFixed(1)}% of total tutors`,
             icon: I.calendarCheck, pct: m.updatedRate, fEnd: (v) => String(Math.round(v)),
             barColor: 'var(--accent)', iconBg: 'var(--accent-bg)', iconColor: 'var(--accent)',
@@ -1241,7 +1241,7 @@
         if (!f) return data;
         switch (f) {
           case 'active_tutors': return data.filter(r => Number(r.is_active) === 1);
-          case 'updated_tutors': return data.filter(r => Number(r.is_updated_last_friday) === 1);
+          case 'updated_tutors': return data.filter(r => Number(r.is_updated_last_sunday) === 1);
           case 'timesheet_tutors': return data.filter(r => Utils.toNum(r.active_timesheet_count) > 0);
           default: return data;
         }
