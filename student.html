@@ -1674,7 +1674,7 @@
         const blob = new Blob(['\uFEFF' + [hdr, ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = `tutortrack_${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+        a.href = url; a.download = `student_tracker_${new Date().toISOString().slice(0, 10)}.csv`; a.click();
         URL.revokeObjectURL(url);
         Utils.toast(`${data.length} records exported`, 'success');
       };
@@ -1682,12 +1682,12 @@
       const toggleTheme = () => {
         const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
-        try { localStorage.setItem('tutortrack_theme', next); } catch (_) { }
+        try { localStorage.setItem('tutoring_theme', next); } catch (_) { }
         ChartManager.updateTheme();
       };
 
       const initTheme = () => {
-        try { const s = localStorage.getItem('tutortrack_theme'); if (s) { document.documentElement.setAttribute('data-theme', s); return; } } catch (_) { }
+        try { const s = localStorage.getItem('tutoring_theme'); if (s) { document.documentElement.setAttribute('data-theme', s); return; } } catch (_) { }
         if (window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.setAttribute('data-theme', 'light');
       };
 

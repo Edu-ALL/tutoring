@@ -1363,12 +1363,12 @@
       const toggleTheme = () => {
         const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
-        try { localStorage.setItem('tutortracker_theme', next); } catch (_) { }
+        try { localStorage.setItem('tutoring_theme', next); } catch (_) { }
       };
 
       const initTheme = () => {
         try {
-          const s = localStorage.getItem('tutortracker_theme');
+          const s = localStorage.getItem('tutoring_theme');
           if (s) { document.documentElement.setAttribute('data-theme', s); return; }
         } catch (_) { }
         if (window.matchMedia('(prefers-color-scheme: light)').matches)
