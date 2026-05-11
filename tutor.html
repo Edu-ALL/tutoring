@@ -80,17 +80,8 @@
       --header-bg: rgba(242, 243, 247, 0.82);
     }
 
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'DM Sans', sans-serif;
@@ -101,9 +92,7 @@
       transition: background 0.35s, color 0.35s;
     }
 
-    .font-display {
-      font-family: 'Space Grotesk', sans-serif;
-    }
+    .font-display { font-family: 'Space Grotesk', sans-serif; }
 
     :focus-visible {
       outline: 2px solid var(--accent);
@@ -117,7 +106,6 @@
       background: var(--skel-base);
       border-radius: 6px;
     }
-
     .skeleton::after {
       content: '';
       position: absolute;
@@ -126,491 +114,157 @@
       transform: translateX(-100%);
       animation: shimmer 1.6s ease-in-out infinite;
     }
+    @keyframes shimmer { to { transform: translateX(100%); } }
 
-    @keyframes shimmer {
-      to {
-        transform: translateX(100%);
-      }
-    }
-
-    .data-table {
-      border-collapse: separate;
-      border-spacing: 0;
-      width: 100%;
-    }
-
+    .data-table { border-collapse: separate; border-spacing: 0; width: 100%; }
     .data-table th {
-      position: sticky;
-      top: 0;
-      z-index: 6;
-      background: var(--card);
-      color: var(--text-sec);
-      font-weight: 600;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      white-space: nowrap;
-      border-bottom: 1.5px solid var(--border-strong);
-      padding: 10px 12px;
-      text-align: left;
-      user-select: none;
-      cursor: pointer;
-      transition: color 0.2s;
+      position: sticky; top: 0; z-index: 6; background: var(--card);
+      color: var(--text-sec); font-weight: 600; font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+      border-bottom: 1.5px solid var(--border-strong); padding: 10px 12px;
+      text-align: left; user-select: none; cursor: pointer; transition: color 0.2s;
     }
-
-    .data-table th:hover {
-      color: var(--text);
-    }
-
-    .data-table th.sorted {
-      color: var(--accent);
-    }
-
-    .data-table th.no-sort {
-      cursor: default;
-    }
-
-    .data-table th.no-sort:hover {
-      color: var(--text-sec);
-    }
-
+    .data-table th:hover { color: var(--text); }
+    .data-table th.sorted { color: var(--accent); }
+    .data-table th.no-sort { cursor: default; }
+    .data-table th.no-sort:hover { color: var(--text-sec); }
     .data-table td {
-      padding: 9px 12px;
-      font-size: 0.78rem;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-      color: var(--text);
-      transition: background 0.15s;
+      padding: 9px 12px; font-size: 0.78rem; border-bottom: 1px solid var(--border);
+      white-space: nowrap; color: var(--text); transition: background 0.15s;
     }
-
-    .data-table tbody tr {
-      transition: background 0.15s;
+    .data-table tbody tr { transition: background 0.15s; }
+    .data-table tbody tr:nth-child(even) { background: var(--row-alt); }
+    .data-table tbody tr:hover { background: var(--accent-bg); }
+    .data-table th.sticky-col, .data-table td.sticky-col {
+      position: sticky; left: 0; z-index: 5; background: var(--card);
     }
-
-    .data-table tbody tr:nth-child(even) {
-      background: var(--row-alt);
-    }
-
-    .data-table tbody tr:hover {
-      background: var(--accent-bg);
-    }
-
-    .data-table th.sticky-col,
-    .data-table td.sticky-col {
-      position: sticky;
-      left: 0;
-      z-index: 5;
-      background: var(--card);
-    }
-
-    .data-table th.sticky-col {
-      z-index: 7;
-    }
-
-    .data-table tbody tr:hover td.sticky-col {
-      background: var(--card-hover);
-    }
+    .data-table th.sticky-col { z-index: 7; }
+    .data-table tbody tr:hover td.sticky-col { background: var(--card-hover); }
 
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 10px;
-      border-radius: 999px;
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 10px; border-radius: 999px;
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em;
     }
+    .badge-active { background: var(--success-bg); color: var(--success); }
+    .badge-inactive { background: var(--danger-bg); color: var(--danger); }
+    .badge-yes { background: var(--success-bg); color: var(--success); }
+    .badge-no { background: var(--danger-bg); color: var(--danger); }
+    .badge-muted { background: var(--bg-raised); color: var(--text-muted); }
+    .badge-day { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-border); }
 
-    .badge-active {
-      background: var(--success-bg);
-      color: var(--success);
-    }
-
-    .badge-inactive {
-      background: var(--danger-bg);
-      color: var(--danger);
-    }
-
-    .badge-yes {
-      background: var(--success-bg);
-      color: var(--success);
-    }
-
-    .badge-no {
-      background: var(--danger-bg);
-      color: var(--danger);
-    }
-
-    .badge-muted {
-      background: var(--bg-raised);
-      color: var(--text-muted);
-    }
-
-    .badge-day {
-      background: var(--accent-bg);
-      color: var(--accent);
-      border: 1px solid var(--accent-border);
-    }
-
-    .kpi-bar {
-      height: 3px;
-      border-radius: 2px;
-      background: var(--border);
-      margin-top: 12px;
-      overflow: hidden;
-    }
-
-    .kpi-bar-fill {
-      height: 100%;
-      border-radius: 2px;
-      transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-    }
+    .kpi-bar { height: 3px; border-radius: 2px; background: var(--border); margin-top: 12px; overflow: hidden; }
+    .kpi-bar-fill { height: 100%; border-radius: 2px; transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
 
     #toast-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column-reverse;
-      gap: 8px;
+      position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+      display: flex; flex-direction: column-reverse; gap: 8px;
     }
-
     .toast-msg {
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #fff;
-      max-width: 360px;
-      background: var(--border-strong);
+      padding: 10px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 500;
+      color: #fff; max-width: 360px; background: var(--border-strong);
       border-left: 3px solid var(--accent);
-      transform: translateX(120%);
-      opacity: 0;
+      transform: translateX(120%); opacity: 0;
       transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s;
     }
+    .toast-msg.visible { transform: translateX(0); opacity: 1; }
+    .toast-msg.toast-error { border-left-color: var(--danger); }
+    .toast-msg.toast-success { border-left-color: var(--success); }
 
-    .toast-msg.visible {
-      transform: translateX(0);
-      opacity: 1;
-    }
+    .theme-icon { transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+    [data-theme="light"] .theme-icon { transform: rotate(180deg); }
 
-    .toast-msg.toast-error {
-      border-left-color: var(--danger);
-    }
-
-    .toast-msg.toast-success {
-      border-left-color: var(--success);
-    }
-
-    .theme-icon {
-      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    [data-theme="light"] .theme-icon {
-      transform: rotate(180deg);
-    }
-
-    .table-wrap::-webkit-scrollbar {
-      height: 6px;
-    }
-
-    .table-wrap::-webkit-scrollbar-track {
-      background: var(--bg-raised);
-    }
-
-    .table-wrap::-webkit-scrollbar-thumb {
-      background: var(--border-strong);
-      border-radius: 3px;
-    }
+    .table-wrap::-webkit-scrollbar { height: 6px; }
+    .table-wrap::-webkit-scrollbar-track { background: var(--bg-raised); }
+    .table-wrap::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
 
     @media (prefers-reduced-motion: reduce) {
-
-      *,
-      *::before,
-      *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-      }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     }
 
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
+      content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
       background:
         radial-gradient(ellipse 80% 50% at 20% 10%, var(--accent-bg) 0%, transparent 60%),
         radial-gradient(ellipse 60% 40% at 85% 80%, rgba(45, 212, 191, 0.03) 0%, transparent 50%);
     }
 
     .kpi-card {
-      cursor: pointer;
       border: 1.5px solid var(--border);
       transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
-
     .kpi-card:hover {
-      border-color: var(--border-strong);
-      background: var(--card-hover);
-      transform: translateY(-1px);
+      border-color: var(--border-strong); background: var(--card-hover); transform: translateY(-1px);
     }
 
-    .kpi-card.kpi-active {
-      border-color: var(--accent);
-      background: var(--accent-bg);
-      box-shadow: 0 0 0 1px var(--accent-border), 0 2px 12px rgba(45, 212, 191, 0.08);
-    }
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .kpi-card.kpi-active::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--accent);
-      border-radius: 0 0 2px 2px;
-    }
-
-    .kpi-card.kpi-active-danger {
-      border-color: var(--danger);
-      background: var(--danger-bg);
-      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.18), 0 2px 12px rgba(248, 113, 113, 0.06);
-    }
-
-    .kpi-card.kpi-active-danger::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--danger);
-      border-radius: 0 0 2px 2px;
-    }
-
-    .kpi-card .kpi-hint {
-      position: absolute;
-      bottom: 8px;
-      right: 12px;
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .kpi-card:hover .kpi-hint {
-      opacity: 1;
-    }
-
-    .kpi-card.kpi-active .kpi-hint,
-    .kpi-card.kpi-active-danger .kpi-hint {
-      opacity: 1;
-      color: var(--accent);
-    }
-
-    .kpi-card.kpi-active-danger .kpi-hint {
-      color: var(--danger);
-    }
-
-    .filter-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px 5px 14px;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      background: var(--accent-bg);
-      border: 1px solid var(--accent-border);
-      color: var(--accent);
-      animation: chipIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .filter-chip.filter-chip-danger {
-      background: var(--danger-bg);
-      border-color: rgba(248, 113, 113, 0.18);
-      color: var(--danger);
-    }
-
-    .filter-chip button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: none;
-      background: var(--accent-border);
-      color: var(--accent);
-      cursor: pointer;
-      font-size: 0.65rem;
-      line-height: 1;
-      transition: background 0.15s;
-    }
-
-    .filter-chip.filter-chip-danger button {
-      background: rgba(248, 113, 113, 0.18);
-      color: var(--danger);
-    }
-
-    .filter-chip button:hover {
-      background: var(--accent);
-      color: #0B0D13;
-    }
-
-    .filter-chip.filter-chip-danger button:hover {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    @keyframes chipIn {
-      from {
-        opacity: 0;
-        transform: scale(0.9) translateY(-4px);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-
-    .spin {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .tutor-name-cell {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .tutor-name-cell { display: flex; align-items: center; gap: 10px; }
     .tutor-avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.68rem;
-      font-weight: 700;
-      flex-shrink: 0;
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 700; flex-shrink: 0;
       font-family: 'Space Grotesk', sans-serif;
-      color: var(--accent);
-      background: var(--accent-bg);
-      border: 1px solid var(--accent-border);
+      color: var(--accent); background: var(--accent-bg); border: 1px solid var(--accent-border);
     }
+    .tutor-avatar.inactive-avatar { color: var(--text-muted); background: var(--bg-raised); border-color: var(--border); }
+    .time-cell { font-variant-numeric: tabular-nums; color: var(--text-sec); }
 
-    .tutor-avatar.inactive-avatar {
-      color: var(--text-muted);
-      background: var(--bg-raised);
-      border-color: var(--border);
+    .filter-select {
+      appearance: none;
+      background-color: var(--card);
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239298AD' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
     }
-
-    .time-cell {
-      font-variant-numeric: tabular-nums;
-      color: var(--text-sec);
-    }
+    .filter-select option { background: var(--card); color: var(--text); }
   </style>
 </head>
 
 <body>
 
-  <!-- Info Alert Banner -->
   <div class="border-b" style="background:var(--success-bg);border-color:var(--success-border);">
-    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-2 flex items-center gap-2 text-[0.72rem]"
-      style="color:var(--success);">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-        <circle cx="12" cy="12" r="10" />
-        <line x1="12" y1="16" x2="12" y2="12" />
-        <line x1="12" y1="8" x2="12.01" y2="8" />
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-2 flex items-center gap-2 text-[0.72rem]" style="color:var(--success);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+        <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
       </svg>
-      <span>All data visualized on this page is sourced from the <strong>Timesheet Database</strong> via Google Sheets
-        integration. Data refreshes periodically and may have a slight delay from live timesheet updates. <a
-          href="https://docs.google.com/spreadsheets/d/1BCbh-J7Rwxv3bbVtUnMATnxvqwDR8tF5TEb2zaW8hWw/edit?usp=sharing"
-          target="_blank" rel="noopener" style="text-decoration:underline;font-weight:600;">View Source
-          Spreadsheet</a></span>
+      <span>All data visualized on this page is sourced from the <strong>Timesheet Database</strong> via Google Sheets integration. Data refreshes periodically and may have a slight delay from live timesheet updates. <a href="https://docs.google.com/spreadsheets/d/1BCbh-J7Rwxv3bbVtUnMATnxvqwDR8tF5TEb2zaW8hWw/edit?usp=sharing" target="_blank" rel="noopener" style="text-decoration:underline;font-weight:600;">View Source Spreadsheet</a></span>
     </div>
   </div>
 
-  <header class="sticky top-0 z-50 border-b backdrop-blur-xl"
-    style="background:var(--header-bg);border-color:var(--border);">
+  <header class="sticky top-0 z-50 border-b backdrop-blur-xl" style="background:var(--header-bg);border-color:var(--border);">
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-7 h-7 rounded-md flex items-center justify-center"
-          style="background:var(--accent-bg);border:1px solid var(--accent-border);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        <div class="w-7 h-7 rounded-md flex items-center justify-center" style="background:var(--accent-bg);border:1px solid var(--accent-border);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
         </div>
         <h1 class="font-display font-bold text-base tracking-tight" style="color:var(--text);">Tutoring Dashboard</h1>
       </div>
       <nav class="flex items-center gap-1 sm:gap-2">
-        <a href="index.html" class="text-[0.7rem] font-semibold px-3 py-1.5 rounded-lg transition-colors"
-          style="color:var(--text-sec);"
-          onmouseover="this.style.background='var(--accent-bg)';this.style.color='var(--accent)'"
-          onmouseout="this.style.background='transparent';this.style.color='var(--text-sec)'">Package</a>
-        <a href="student.html" class="text-[0.7rem] font-semibold px-3 py-1.5 rounded-lg transition-colors"
-          style="color:var(--text-sec);"
-          onmouseover="this.style.background='var(--accent-bg)';this.style.color='var(--accent)'"
-          onmouseout="this.style.background='transparent';this.style.color='var(--text-sec)'">Student</a>
-        <a href="tutor.html" class="text-[0.7rem] font-semibold px-3 py-1.5 rounded-lg transition-colors"
-          style="background:var(--accent);color:#fff;">Tutor</a>
+        <a href="index.html" class="text-[0.7rem] font-semibold px-3 py-1.5 rounded-lg transition-colors" style="color:var(--text-sec);" onmouseover="this.style.background='var(--accent-bg)';this.style.color='var(--accent)'" onmouseout="this.style.background='transparent';this.style.color='var(--text-sec)'">Package</a>
+        <a href="student.html" class="text-[0.7rem] font-semibold px-3 py-1.5 rounded-lg transition-colors" style="color:var(--text-sec);" onmouseover="this.style.background='var(--accent-bg)';this.style.color='var(--accent)'" onmouseout="this.style.background='transparent';this.style.color='var(--text-sec)'">Student</a>
+        <a href="tutor.html" class="text-[0.7rem] font-semibold px-3 py-1.5 rounded-lg transition-colors" style="background:var(--accent);color:#fff;">Tutor</a>
       </nav>
       <div class="flex items-center gap-1.5">
         <span id="last-updated" class="hidden sm:inline text-xs mr-2" style="color:var(--text-muted);"></span>
-        <button id="btn-refresh" aria-label="Refresh data"
-          class="w-8 h-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--accent-bg)]"
-          style="color:var(--text-sec);">
-          <svg id="refresh-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 2v6h-6" />
-            <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
-            <path d="M3 22v-6h6" />
-            <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+        <button id="btn-refresh" aria-label="Refresh data" class="w-8 h-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--accent-bg)]" style="color:var(--text-sec);">
+          <svg id="refresh-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 2v6h-6" /><path d="M3 12a9 9 0 0 1 15-6.7L21 8" /><path d="M3 22v-6h6" /><path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
           </svg>
         </button>
-        <button id="btn-export" aria-label="Export CSV"
-          class="w-8 h-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--accent-bg)]"
-          style="color:var(--text-sec);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
+        <button id="btn-export" aria-label="Export CSV" class="w-8 h-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--accent-bg)]" style="color:var(--text-sec);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
           </svg>
         </button>
-        <button id="btn-theme" aria-label="Toggle dark mode"
-          class="w-8 h-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--accent-bg)]"
-          style="color:var(--text-sec);">
-          <svg class="theme-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" />
-            <line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        <button id="btn-theme" aria-label="Toggle dark mode" class="w-8 h-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--accent-bg)]" style="color:var(--text-sec);">
+          <svg class="theme-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
           </svg>
         </button>
       </div>
@@ -619,56 +273,53 @@
 
   <main class="max-w-[1440px] mx-auto px-4 sm:px-6 pb-16">
 
-    <section id="kpi-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6"
-      aria-label="Key metrics"></section>
+    <section id="kpi-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6" aria-label="Key metrics"></section>
 
-    <section id="error-section" class="hidden mt-10 text-center py-16 rounded-xl border"
-      style="border-color:var(--border);background:var(--card);">
-      <div class="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4"
-        style="background:var(--danger-bg);">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="15" y1="9" x2="9" y2="15" />
-          <line x1="9" y1="9" x2="15" y2="15" />
+    <section id="error-section" class="hidden mt-10 text-center py-16 rounded-xl border" style="border-color:var(--border);background:var(--card);">
+      <div class="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background:var(--danger-bg);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" />
         </svg>
       </div>
       <p class="font-display font-semibold text-sm mb-1" style="color:var(--text);">Failed to load data</p>
       <p id="error-msg" class="text-xs mb-5" style="color:var(--text-muted);">An unknown error occurred.</p>
       <div class="flex items-center justify-center gap-3">
-        <button id="btn-retry" class="px-4 py-2 rounded-lg text-xs font-semibold transition-colors"
-          style="background:var(--accent);color:#fff;">Retry</button>
-        <button id="btn-use-cache" class="hidden px-4 py-2 rounded-lg text-xs font-semibold border transition-colors"
-          style="border-color:var(--border-strong);color:var(--text-sec);">Use Cached Data</button>
+        <button id="btn-retry" class="px-4 py-2 rounded-lg text-xs font-semibold transition-colors" style="background:var(--accent);color:#fff;">Retry</button>
+        <button id="btn-use-cache" class="hidden px-4 py-2 rounded-lg text-xs font-semibold border transition-colors" style="border-color:var(--border-strong);color:var(--text-sec);">Use Cached Data</button>
       </div>
     </section>
 
-    <section id="filter-chip-section" class="hidden mt-5 flex items-center gap-2">
-      <span class="text-[0.65rem] font-medium" style="color:var(--text-muted);">Filtered by:</span>
-      <div id="filter-chip" class="filter-chip">
-        <span id="filter-chip-label"></span>
-        <button id="filter-chip-clear" aria-label="Clear filter">&times;</button>
-      </div>
-    </section>
-
-    <section id="controls-section"
-      class="mt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      <div class="relative w-full sm:w-80">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="14" height="14" viewBox="0 0 24 24" fill="none"
-          stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input id="search-input" type="text" placeholder="Search tutor name, day..." aria-label="Search"
-          class="w-full pl-9 pr-3 py-2 rounded-lg text-xs border outline-none transition-colors"
-          style="background:var(--card);border-color:var(--border);color:var(--text);"
-          onfocus="this.style.borderColor='var(--accent-border)'" onblur="this.style.borderColor='var(--border)'">
+    <section id="controls-section" class="mt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+        <div class="relative w-full sm:w-72">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input id="search-input" type="text" placeholder="Search tutor name..." aria-label="Search"
+            class="w-full pl-9 pr-3 py-2 rounded-lg text-xs border outline-none transition-colors"
+            style="background-color:var(--card);border-color:var(--border);color:var(--text);"
+            onfocus="this.style.borderColor='var(--accent-border)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <select id="filter-status" aria-label="Filter by status"
+          class="filter-select px-3 py-2 rounded-lg text-xs border outline-none cursor-pointer transition-colors"
+          style="border-color:var(--border);color:var(--text);">
+          <option value="">All Status</option>
+          <option value="1">Active</option>
+          <option value="0">Inactive</option>
+        </select>
+        <select id="filter-updated" aria-label="Filter by last Sunday update"
+          class="filter-select px-3 py-2 rounded-lg text-xs border outline-none cursor-pointer transition-colors"
+          style="border-color:var(--border);color:var(--text);">
+          <option value="">All Updated Status</option>
+          <option value="1">Updated</option>
+          <option value="0">Not Updated</option>
+        </select>
       </div>
       <div class="flex items-center gap-3">
         <span id="table-info" class="text-xs" style="color:var(--text-muted);"></span>
         <select id="page-size" aria-label="Rows per page"
-          class="px-3 py-2 rounded-lg text-xs border outline-none cursor-pointer transition-colors"
-          style="background:var(--card);border-color:var(--border);color:var(--text);">
+          class="filter-select px-3 py-2 rounded-lg text-xs border outline-none cursor-pointer transition-colors"
+          style="border-color:var(--border);color:var(--text);">
           <option value="10">10 rows</option>
           <option value="20">20 rows</option>
           <option value="50">50 rows</option>
@@ -676,8 +327,7 @@
       </div>
     </section>
 
-    <section id="table-section" class="mt-3 rounded-xl border overflow-hidden"
-      style="border-color:var(--border);background:var(--card);">
+    <section id="table-section" class="mt-3 rounded-xl border overflow-hidden" style="border-color:var(--border);background:var(--card);">
       <div class="table-wrap overflow-x-auto" style="max-height:62vh;overflow-y:auto;">
         <table class="data-table" id="data-table" role="grid">
           <thead id="table-head"></thead>
@@ -685,35 +335,21 @@
         </table>
       </div>
       <div id="empty-state" class="hidden py-16 text-center">
-        <svg class="mx-auto mb-3" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)"
-          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          <line x1="8" y1="11" x2="14" y2="11" />
+        <svg class="mx-auto mb-3" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /><line x1="8" y1="11" x2="14" y2="11" />
         </svg>
         <p class="text-xs font-medium" style="color:var(--text-muted);">No matching records found</p>
-        <button id="btn-clear-search" class="mt-3 text-xs font-semibold transition-colors"
-          style="color:var(--accent);">Clear search</button>
+        <button id="btn-clear-search" class="mt-3 text-xs font-semibold transition-colors" style="color:var(--accent);">Clear filters</button>
       </div>
     </section>
 
     <section id="pagination-section" class="mt-4 flex items-center justify-between">
-      <button id="btn-prev" aria-label="Previous page"
-        class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        style="border-color:var(--border);color:var(--text-sec);">
-        <svg class="inline -mt-px mr-1" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>Prev
+      <button id="btn-prev" aria-label="Previous page" class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors disabled:opacity-30 disabled:cursor-not-allowed" style="border-color:var(--border);color:var(--text-sec);">
+        <svg class="inline -mt-px mr-1" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>Prev
       </button>
       <div id="page-numbers" class="flex items-center gap-1" role="navigation" aria-label="Pagination"></div>
-      <button id="btn-next" aria-label="Next page"
-        class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        style="border-color:var(--border);color:var(--text-sec);">
-        Next<svg class="inline -mt-px ml-1" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
+      <button id="btn-next" aria-label="Next page" class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors disabled:opacity-30 disabled:cursor-not-allowed" style="border-color:var(--border);color:var(--text-sec);">
+        Next<svg class="inline -mt-px ml-1" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
       </button>
     </section>
 
@@ -730,7 +366,6 @@
       CACHE_TTL: 3600,
       DEFAULT_PAGE_SIZE: 10,
       FETCH_TIMEOUT: 15000,
-
       COLUMNS: [
         { key: 'full_name', label: 'Tutor', type: 'tutor_name', sticky: true },
         { key: 'is_active', label: 'Status', type: 'active_badge', sticky: false },
@@ -739,21 +374,11 @@
         { key: 'is_updated_last_sunday', label: 'Updated Last Sunday', type: 'updated_badge', sticky: false },
         { key: 'updated_at', label: 'Last Updated', type: 'date', sticky: false },
       ],
-
-      SEARCHABLE_FIELDS: ['full_name', 'day_of_week'],
-
-      KPI_FILTER_LABELS: {
-        active_tutors: 'Active Tutors',
-        updated_tutors: 'Updated Last Sunday',
-        timesheet_tutors: 'Has Timesheets',
-      },
-
+      SEARCHABLE_FIELDS: ['full_name'],
       RESPONSE_TRANSFORM: (raw) => {
         if (!raw) return [];
         if (Array.isArray(raw) && raw.length > 0 && Array.isArray(raw[0])) {
-          const headers = raw[0].map(h =>
-            String(h).trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')
-          );
+          const headers = raw[0].map(h => String(h).trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, ''));
           return raw.slice(1).map(row => {
             const obj = {};
             headers.forEach((h, i) => { obj[h] = row[i] != null ? row[i] : null; });
@@ -767,65 +392,49 @@
     };
 
     const DAY_MAP = {
-      '1': 'Monday', '2': 'Tuesday', '3': 'Wednesday',
-      '4': 'Thursday', '5': 'Friday', '6': 'Saturday', '7': 'Sunday',
-      'monday': 'Monday', 'tuesday': 'Tuesday', 'wednesday': 'Wednesday',
-      'thursday': 'Thursday', 'friday': 'Friday', 'saturday': 'Saturday', 'sunday': 'Sunday',
-      'senin': 'Monday', 'selasa': 'Tuesday', 'rabu': 'Wednesday',
-      'kamis': 'Thursday', 'jumat': 'Friday', 'sabtu': 'Saturday', 'minggu': 'Sunday',
+      '1':'Monday','2':'Tuesday','3':'Wednesday','4':'Thursday','5':'Friday','6':'Saturday','7':'Sunday',
+      'monday':'Monday','tuesday':'Tuesday','wednesday':'Wednesday','thursday':'Thursday','friday':'Friday','saturday':'Saturday','sunday':'Sunday',
+      'senin':'Monday','selasa':'Tuesday','rabu':'Wednesday','kamis':'Thursday','jumat':'Friday','sabtu':'Saturday','minggu':'Sunday',
     };
-    const DAY_SHORT = {
-      'Monday': 'Mon', 'Tuesday': 'Tue', 'Wednesday': 'Wed',
-      'Thursday': 'Thu', 'Friday': 'Fri', 'Saturday': 'Sat', 'Sunday': 'Sun',
-    };
+    const DAY_SHORT = { 'Monday':'Mon','Tuesday':'Tue','Wednesday':'Wed','Thursday':'Thu','Friday':'Fri','Saturday':'Sat','Sunday':'Sun' };
 
     const AVATAR_COLORS = [
-      { bg: 'rgba(45,212,191,0.10)', border: 'rgba(45,212,191,0.20)', fg: '#2DD4BF' },
-      { bg: 'rgba(251,191,36,0.10)', border: 'rgba(251,191,36,0.20)', fg: '#FBBF24' },
-      { bg: 'rgba(248,113,113,0.10)', border: 'rgba(248,113,113,0.20)', fg: '#F87171' },
-      { bg: 'rgba(129,140,248,0.10)', border: 'rgba(129,140,248,0.20)', fg: '#818CF8' },
-      { bg: 'rgba(52,211,153,0.10)', border: 'rgba(52,211,153,0.20)', fg: '#34D399' },
-      { bg: 'rgba(244,114,182,0.10)', border: 'rgba(244,114,182,0.20)', fg: '#F472B6' },
+      { bg:'rgba(45,212,191,0.10)', border:'rgba(45,212,191,0.20)', fg:'#2DD4BF' },
+      { bg:'rgba(251,191,36,0.10)', border:'rgba(251,191,36,0.20)', fg:'#FBBF24' },
+      { bg:'rgba(248,113,113,0.10)', border:'rgba(248,113,113,0.20)', fg:'#F87171' },
+      { bg:'rgba(129,140,248,0.10)', border:'rgba(129,140,248,0.20)', fg:'#818CF8' },
+      { bg:'rgba(52,211,153,0.10)', border:'rgba(52,211,153,0.20)', fg:'#34D399' },
+      { bg:'rgba(244,114,182,0.10)', border:'rgba(244,114,182,0.20)', fg:'#F472B6' },
     ];
 
-    /* ═══════════════════ UTILITIES ═══════════════════ */
     const Utils = {
       formatDate: (val) => {
         if (!val) return '-';
         const d = new Date(val);
         if (isNaN(d.getTime())) return String(val);
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
       },
       formatTime: (val) => {
         if (!val && val !== 0) return '-';
         const s = String(val).trim();
         if (/^\d{1,2}:\d{2}/.test(s)) {
-          const parts = s.split(':');
-          const h = parseInt(parts[0], 10);
-          const m = parts[1];
-          const ampm = h >= 12 ? 'PM' : 'AM';
-          const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-          return `${h12}:${m} ${ampm}`;
+          const p = s.split(':'), h = parseInt(p[0],10), m = p[1], ap = h >= 12 ? 'PM' : 'AM', h12 = h === 0 ? 12 : h > 12 ? h-12 : h;
+          return `${h12}:${m} ${ap}`;
         }
         return s;
       },
       toNum: (val) => Number(val) || 0,
       debounce: (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; },
       toast: (msg, type = 'info', duration = 4000) => {
-        const c = document.getElementById('toast-container');
-        const el = document.createElement('div');
-        el.className = `toast-msg toast-${type}`;
-        el.textContent = msg;
-        c.appendChild(el);
+        const c = document.getElementById('toast-container'), el = document.createElement('div');
+        el.className = `toast-msg toast-${type}`; el.textContent = msg; c.appendChild(el);
         requestAnimationFrame(() => el.classList.add('visible'));
         setTimeout(() => { el.classList.remove('visible'); setTimeout(() => el.remove(), 350); }, duration);
       },
       animateValue: (el, end, duration, formatter) => {
-        const t0 = performance.now();
-        const isInt = Number.isInteger(end);
+        const t0 = performance.now(), isInt = Number.isInteger(end);
         const tick = (now) => {
-          const p = Math.min((now - t0) / duration, 1);
-          const eased = end * (1 - Math.pow(1 - p, 3));
+          const p = Math.min((now - t0) / duration, 1), eased = end * (1 - Math.pow(1 - p, 3));
           el.textContent = isInt ? formatter(Math.round(eased)) : formatter(eased);
           if (p < 1) requestAnimationFrame(tick);
         };
@@ -834,7 +443,7 @@
       getInitials: (name) => {
         if (!name) return '?';
         const parts = String(name).trim().split(/\s+/);
-        if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        if (parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
         return parts[0].substring(0, 2).toUpperCase();
       },
       getAvatarColor: (name) => {
@@ -846,50 +455,30 @@
       resolveDay: (val) => {
         if (!val && val !== 0) return '-';
         const key = String(val).trim().toLowerCase();
-        const mapped = DAY_MAP[key];
-        if (mapped) return mapped;
-        return String(val).trim();
+        return DAY_MAP[key] || String(val).trim();
       },
     };
 
-    /* ═════════════════ STATE ═══════════════════ */
     const State = {
-      rawData: [],
-      filteredData: [],
-      columns: [],
-      currentPage: 1,
-      pageSize: CONFIG.DEFAULT_PAGE_SIZE,
-      sortKey: null,
-      sortDir: 'asc',
-      searchQuery: '',
-      isLoading: true,
-      activeKPIFilter: null,
+      rawData: [], filteredData: [], columns: [],
+      currentPage: 1, pageSize: CONFIG.DEFAULT_PAGE_SIZE,
+      sortKey: null, sortDir: 'asc',
+      searchQuery: '', isLoading: true,
+      filterStatus: '', filterUpdated: '',
     };
 
-    /* ═════════════════ DATA SERVICE ═══════════════════ */
     const DataService = (() => {
-      const getCache = () => {
-        try {
-          const raw = localStorage.getItem(CONFIG.CACHE_KEY);
-          if (!raw) return null;
-          const { data, ts } = JSON.parse(raw);
-          if (Array.isArray(data) && data.length > 0 && ts) return { data, ts };
-        } catch (_) { }
-        return null;
-      };
-      const setCache = (data) => {
-        try { localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify({ data, ts: Date.now() })); } catch (_) { }
-      };
+      const getCache = () => { try { const r = localStorage.getItem(CONFIG.CACHE_KEY); if (!r) return null; const {data,ts} = JSON.parse(r); if (Array.isArray(data) && data.length > 0 && ts) return {data,ts}; } catch(_){} return null; };
+      const setCache = (data) => { try { localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify({data,ts:Date.now()})); } catch(_){} };
       const isFresh = (ts) => (Date.now() - ts) < (CONFIG.CACHE_TTL * 1000);
       const fetch = async () => {
         if (!CONFIG.SHEET_ENDPOINT.trim()) throw new Error('No data source configured.');
         const cached = getCache();
         if (cached && isFresh(cached.ts)) return { data: cached.data, fromCache: true };
         try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), CONFIG.FETCH_TIMEOUT);
-          const resp = await window.fetch(CONFIG.SHEET_ENDPOINT, { signal: controller.signal });
-          clearTimeout(timeoutId);
+          const ctrl = new AbortController(), tid = setTimeout(() => ctrl.abort(), CONFIG.FETCH_TIMEOUT);
+          const resp = await window.fetch(CONFIG.SHEET_ENDPOINT, { signal: ctrl.signal });
+          clearTimeout(tid);
           if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
           const raw = await resp.json();
           if (raw && raw.error) throw new Error(raw.error);
@@ -898,7 +487,7 @@
           setCache(data);
           return { data, fromCache: false };
         } catch (err) {
-          if (err.name === 'AbortError') throw new Error(`Request timed out after ${CONFIG.FETCH_TIMEOUT / 1000}s.`);
+          if (err.name === 'AbortError') throw new Error(`Request timed out after ${CONFIG.FETCH_TIMEOUT/1000}s.`);
           if (cached) return { data: cached.data, fromCache: true, stale: true };
           throw err;
         }
@@ -907,43 +496,32 @@
       return { fetch, loadCached, getCache };
     })();
 
-    /* ═════════════════ METRIC ENGINE ═══════════════════ */
     const MetricEngine = (() => {
       const calculate = (data) => {
-        const allNames = new Set();
-        const activeNames = new Set();
-        const updatedNames = new Set();
-        const timesheetNames = new Set();
-        let totalTimesheets = 0;
-
+        const allN = new Set(), actN = new Set(), updN = new Set(), tsN = new Set();
+        let totalTS = 0;
         data.forEach(r => {
-          const name = (r.full_name || '').trim();
-          if (!name) return;
-          allNames.add(name);
-          if (Number(r.is_active) === 1) activeNames.add(name);
-          if (Number(r.is_updated_last_sunday) === 1) updatedNames.add(name);
-          if (Utils.toNum(r.active_timesheet_count) > 0) timesheetNames.add(name);
-          totalTimesheets += Utils.toNum(r.active_timesheet_count);
+          const name = (r.full_name || '').trim(); if (!name) return;
+          allN.add(name);
+          if (Number(r.is_active) === 1) actN.add(name);
+          if (Number(r.is_updated_last_sunday) === 1) updN.add(name);
+          if (Utils.toNum(r.active_timesheet_count) > 0) tsN.add(name);
+          totalTS += Utils.toNum(r.active_timesheet_count);
         });
-
-        const total = allNames.size;
-
+        const total = allN.size;
         return {
-          totalTutors: total,
-          activeTutors: activeNames.size,
-          activeRate: total > 0 ? (activeNames.size / total) * 100 : 0,
-          updatedTutors: updatedNames.size,
-          updatedRate: total > 0 ? (updatedNames.size / total) * 100 : 0,
-          totalTimesheets,
-          timesheetTutors: timesheetNames.size,
-          timesheetRate: total > 0 ? (timesheetNames.size / total) * 100 : 0,
+          totalTutors: total, activeTutors: actN.size,
+          activeRate: total > 0 ? (actN.size/total)*100 : 0,
+          updatedTutors: updN.size,
+          updatedRate: total > 0 ? (updN.size/total)*100 : 0,
+          totalTimesheets: totalTS, timesheetTutors: tsN.size,
+          timesheetRate: total > 0 ? (tsN.size/total)*100 : 0,
           totalRows: data.length,
         };
       };
       return { calculate };
     })();
 
-    /* ═════════════════ RENDERER ═══════════════════ */
     const Renderer = (() => {
       const $kpi = document.getElementById('kpi-section');
       const $thead = document.getElementById('table-head');
@@ -957,9 +535,6 @@
       const $btnC = document.getElementById('btn-use-cache');
       const $prev = document.getElementById('btn-prev');
       const $next = document.getElementById('btn-next');
-      const $chipSec = document.getElementById('filter-chip-section');
-      const $chipLabel = document.getElementById('filter-chip-label');
-      const $chip = document.getElementById('filter-chip');
 
       const I = {
         users: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
@@ -974,104 +549,43 @@
       const skeletonKPI = () => {
         let h = '';
         for (let i = 0; i < 4; i++) {
-          h += `<div class="rounded-xl p-5" style="background:var(--card);border:1.5px solid var(--border);">
-            <div class="flex items-center gap-3 mb-4"><div class="skeleton w-9 h-9 rounded-lg flex-shrink-0"></div><div class="skeleton h-3 w-24 rounded"></div></div>
-            <div class="skeleton h-7 w-28 rounded mb-2"></div>
-            <div class="skeleton h-3 w-36 rounded"></div>
-            <div class="kpi-bar mt-3"><div class="skeleton h-full w-full rounded"></div></div>
-          </div>`;
+          h += `<div class="rounded-xl p-5" style="background:var(--card);border:1.5px solid var(--border);"><div class="flex items-center gap-3 mb-4"><div class="skeleton w-9 h-9 rounded-lg flex-shrink-0"></div><div class="skeleton h-3 w-24 rounded"></div></div><div class="skeleton h-7 w-28 rounded mb-2"></div><div class="skeleton h-3 w-36 rounded"></div><div class="kpi-bar mt-3"><div class="skeleton h-full w-full rounded"></div></div></div>`;
         }
         $kpi.innerHTML = h;
       };
 
       const skeletonTable = () => {
         const c = State.columns.length || CONFIG.COLUMNS.length;
-        let th = '<tr>';
-        for (let i = 0; i < c; i++) th += `<th><div class="skeleton h-3 w-14 rounded inline-block"></div></th>`;
+        let th = '<tr>'; for (let i = 0; i < c; i++) th += `<th><div class="skeleton h-3 w-14 rounded inline-block"></div></th>`;
         $thead.innerHTML = th + '</tr>';
         let tb = '';
-        for (let r = 0; r < 8; r++) {
-          tb += '<tr>';
-          for (let j = 0; j < c; j++) tb += `<td><div class="skeleton h-4 rounded" style="width:${45 + Math.random() * 55}%"></div></td>`;
-          tb += '</tr>';
-        }
+        for (let r = 0; r < 8; r++) { tb += '<tr>'; for (let j = 0; j < c; j++) tb += `<td><div class="skeleton h-4 rounded" style="width:${45+Math.random()*55}%"></div></td>`; tb += '</tr>'; }
         $tbody.innerHTML = tb;
       };
 
       const clearKPI = () => { $kpi.innerHTML = ''; };
 
       const renderKPIs = (m) => {
-        const tooltips = {
-          active_tutors: 'Number of tutors currently marked as active — those who are available and assigned to programs.',
-          updated_tutors: 'Number of tutors who updated their timesheet last Sunday — indicating recent activity.',
-          timesheet_tutors: 'Number of tutors who have at least one active timesheet entry — tutors currently engaged with students.',
-        };
-
         const cards = [
-          {
-            key: null, label: 'Total Tutors', val: m.totalTutors,
-            sub: `${m.totalRows} schedule entries`,
-            icon: I.users, pct: null, fEnd: (v) => String(Math.round(v)),
-            barColor: 'var(--accent)', iconBg: 'var(--accent-bg)', iconColor: 'var(--accent)',
-            noFilter: true,
-          },
-          {
-            key: 'active_tutors', label: 'Active Tutors', val: m.activeTutors,
-            sub: `${m.activeRate.toFixed(1)}% of total tutors`,
-            icon: I.userCheck, pct: m.activeRate, fEnd: (v) => String(Math.round(v)),
-            barColor: 'var(--success)', iconBg: 'var(--success-bg)', iconColor: 'var(--success)',
-          },
-          {
-            key: 'updated_tutors', label: 'Updated Last Sunday', val: m.updatedTutors,
-            sub: `${m.updatedRate.toFixed(1)}% of total tutors`,
-            icon: I.calendarCheck, pct: m.updatedRate, fEnd: (v) => String(Math.round(v)),
-            barColor: 'var(--accent)', iconBg: 'var(--accent-bg)', iconColor: 'var(--accent)',
-          },
-          {
-            key: 'timesheet_tutors', label: 'Has Timesheets', val: m.timesheetTutors,
-            sub: `${m.totalTimesheets} total timesheet entries`,
-            icon: I.fileText, pct: m.timesheetRate, fEnd: (v) => String(Math.round(v)),
-            barColor: 'var(--warning)', iconBg: 'var(--warning-bg)', iconColor: 'var(--warning)',
-          },
+          { label:'Total Tutors', val:m.totalTutors, sub:`${m.totalRows} schedule entries`, icon:I.users, pct:null, fEnd:v=>String(Math.round(v)), barColor:'var(--accent)', iconBg:'var(--accent-bg)', iconColor:'var(--accent)' },
+          { label:'Active Tutors', val:m.activeTutors, sub:`${m.activeRate.toFixed(1)}% of total tutors`, icon:I.userCheck, pct:m.activeRate, fEnd:v=>String(Math.round(v)), barColor:'var(--success)', iconBg:'var(--success-bg)', iconColor:'var(--success)' },
+          { label:'Updated Last Sunday', val:m.updatedTutors, sub:`${m.updatedRate.toFixed(1)}% of total tutors`, icon:I.calendarCheck, pct:m.updatedRate, fEnd:v=>String(Math.round(v)), barColor:'var(--accent)', iconBg:'var(--accent-bg)', iconColor:'var(--accent)' },
+          { label:'Has Timesheets', val:m.timesheetTutors, sub:`${m.totalTimesheets} total timesheet entries`, icon:I.fileText, pct:m.timesheetRate, fEnd:v=>String(Math.round(v)), barColor:'var(--warning)', iconBg:'var(--warning-bg)', iconColor:'var(--warning)' },
         ];
-
-        $kpi.innerHTML = cards.map((c, i) => {
-          const isActive = State.activeKPIFilter === c.key;
-          const activeClass = isActive ? 'kpi-active' : '';
-          const isNoFilter = !!c.noFilter;
-          const tip = tooltips[c.key] || '';
-          return `
-          <div class="kpi-card rounded-xl p-5 ${activeClass} ${isNoFilter ? '!cursor-default' : ''}"
-            ${!isNoFilter ? `data-kpi-filter="${c.key}" role="button" tabindex="0" aria-pressed="${isActive}"` : ''}
-            aria-label="${c.label}" ${!isNoFilter ? `title="${tip}"` : ''}>
+        $kpi.innerHTML = cards.map((c,i) => `
+          <div class="kpi-card rounded-xl p-5" aria-label="${c.label}">
             <div class="flex items-center gap-3 mb-3">
-              <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-                style="background:${c.iconBg};color:${c.iconColor};">${c.icon}</div>
-              <span class="text-xs font-medium inline-flex items-center gap-1.5" style="color:var(--text-muted);">
-                ${c.label}
-                ${!isNoFilter ? `<span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full cursor-help" style="background:var(--border);color:var(--text-muted);font-size:0.55rem;line-height:1;" title="${tip}">
-                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                </span>` : ''}
-              </span>
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:${c.iconBg};color:${c.iconColor};">${c.icon}</div>
+              <span class="text-xs font-medium" style="color:var(--text-muted);">${c.label}</span>
             </div>
             <div class="font-display font-bold text-2xl tracking-tight" style="color:var(--text);" id="kv-${i}">-</div>
             <span class="text-[0.68rem]" style="color:var(--text-muted);">${c.sub}</span>
-            ${c.pct !== null
-              ? `<div class="kpi-bar"><div class="kpi-bar-fill" id="kb-${i}" style="width:0%;background:${c.barColor};"></div></div>`
-              : `<div class="kpi-bar"><div style="height:100%;width:100%;border-radius:2px;background:${c.barColor};opacity:0.12;"></div></div>`
-            }
-            ${!isNoFilter ? `<span class="kpi-hint">${isActive ? 'Click to clear' : 'Click to filter'}</span>` : ''}
-          </div>`;
-        }).join('');
-
+            ${c.pct !== null ? `<div class="kpi-bar"><div class="kpi-bar-fill" id="kb-${i}" style="width:0%;background:${c.barColor};"></div></div>` : `<div class="kpi-bar"><div style="height:100%;width:100%;border-radius:2px;background:${c.barColor};opacity:0.12;"></div></div>`}
+          </div>`).join('');
         requestAnimationFrame(() => {
-          cards.forEach((c, i) => {
-            const el = document.getElementById(`kv-${i}`);
-            if (el) Utils.animateValue(el, c.val, 900, c.fEnd);
-            if (c.pct !== null) {
-              const b = document.getElementById(`kb-${i}`);
-              if (b) b.style.width = Math.min(c.pct, 100) + '%';
-            }
+          cards.forEach((c,i) => {
+            const el = document.getElementById(`kv-${i}`); if (el) Utils.animateValue(el, c.val, 900, c.fEnd);
+            if (c.pct !== null) { const b = document.getElementById(`kb-${i}`); if (b) b.style.width = Math.min(c.pct,100)+'%'; }
           });
         });
       };
@@ -1080,15 +594,10 @@
         $thead.innerHTML = '<tr>' + cols.map(c => {
           const sorted = State.sortKey === c.key;
           const noSort = c.type === 'tutor_name' || c.type === 'active_badge' || c.type === 'updated_badge';
-          const cls = [
-            sorted ? 'sorted' : '',
-            c.sticky ? 'sticky-col' : '',
-            noSort ? 'no-sort' : '',
-          ].filter(Boolean).join(' ');
-          const arrow = sorted ? (State.sortDir === 'asc' ? I.srtA : I.srtD) : (noSort ? '' : I.srtN);
-          const as = sorted ? (State.sortDir === 'asc' ? 'ascending' : 'descending') : 'none';
-          const dataAttr = noSort ? '' : `data-sort="${c.key}"`;
-          return `<th class="${cls}" ${dataAttr} role="columnheader" aria-sort="${as}"><span class="inline-flex items-center gap-1">${c.label}${arrow ? `<span class="inline-flex">${arrow}</span>` : ''}</span></th>`;
+          const cls = [sorted?'sorted':'', c.sticky?'sticky-col':'', noSort?'no-sort':''].filter(Boolean).join(' ');
+          const arrow = sorted ? (State.sortDir==='asc'?I.srtA:I.srtD) : (noSort?'':I.srtN);
+          const as = sorted ? (State.sortDir==='asc'?'ascending':'descending') : 'none';
+          return `<th class="${cls}" ${noSort?'':`data-sort="${c.key}"`} role="columnheader" aria-sort="${as}"><span class="inline-flex items-center gap-1">${c.label}${arrow?`<span class="inline-flex">${arrow}</span>`:''}</span></th>`;
         }).join('') + '</tr>';
       };
 
@@ -1096,76 +605,43 @@
         const v = row[col.key];
         switch (col.type) {
           case 'tutor_name': {
-            const name = v || 'Unknown';
-            const initials = Utils.getInitials(name);
-            const colors = Utils.getAvatarColor(name);
-            const isActive = Number(row.is_active) === 1;
-            return `<div class="tutor-name-cell">
-              <div class="tutor-avatar ${isActive ? '' : 'inactive-avatar'}"
-                style="background:${isActive ? colors.bg : 'var(--bg-raised)'};border-color:${isActive ? colors.border : 'var(--border)'};color:${isActive ? colors.fg : 'var(--text-muted)'};">
-                ${initials}
-              </div>
-              <span class="font-medium" style="color:${isActive ? 'var(--text)' : 'var(--text-muted)'};">${name}</span>
-            </div>`;
+            const name = v || 'Unknown', initials = Utils.getInitials(name), colors = Utils.getAvatarColor(name), isActive = Number(row.is_active) === 1;
+            return `<div class="tutor-name-cell"><div class="tutor-avatar ${isActive?'':'inactive-avatar'}" style="background:${isActive?colors.bg:'var(--bg-raised)'};border-color:${isActive?colors.border:'var(--border)'};color:${isActive?colors.fg:'var(--text-muted)'};">${initials}</div><span class="font-medium" style="color:${isActive?'var(--text)':'var(--text-muted)'};">${name}</span></div>`;
           }
-          case 'active_badge': {
-            const n = Number(v);
-            if (n === 1) return `<span class="badge badge-active">Active</span>`;
-            return `<span class="badge badge-inactive">Inactive</span>`;
-          }
-          case 'updated_badge': {
-            const n = Number(v);
-            if (n === 1) return `<span class="badge badge-yes">Updated</span>`;
-            return `<span class="badge badge-no">Not Updated</span>`;
-          }
-          case 'day': {
-            const day = Utils.resolveDay(v);
-            const short = DAY_SHORT[day] || day;
-            return `<span class="badge badge-day">${short}</span>`;
-          }
-          case 'time': {
-            return `<span class="time-cell">${Utils.formatTime(v)}</span>`;
-          }
-          case 'date': {
-            return Utils.formatDate(v);
-          }
-          case 'number': {
-            return `<span class="tabular-nums font-display font-medium">${Utils.toNum(v)}</span>`;
-          }
-          default:
-            return v != null && v !== '' ? String(v) : `<span style="color:var(--text-muted);">-</span>`;
+          case 'active_badge': return Number(v) === 1 ? `<span class="badge badge-active">Active</span>` : `<span class="badge badge-inactive">Inactive</span>`;
+          case 'updated_badge': return Number(v) === 1 ? `<span class="badge badge-yes">Updated</span>` : `<span class="badge badge-no">Not Updated</span>`;
+          case 'day': { const day = Utils.resolveDay(v); return `<span class="badge badge-day">${DAY_SHORT[day]||day}</span>`; }
+          case 'time': return `<span class="time-cell">${Utils.formatTime(v)}</span>`;
+          case 'date': return Utils.formatDate(v);
+          case 'number': return `<span class="tabular-nums font-display font-medium">${Utils.toNum(v)}</span>`;
+          default: return v != null && v !== '' ? String(v) : `<span style="color:var(--text-muted);">-</span>`;
         }
       };
 
       const renderBody = (rows, cols) => {
         if (!rows.length) { $tbody.innerHTML = ''; $empty.classList.remove('hidden'); return; }
         $empty.classList.add('hidden');
-        $tbody.innerHTML = rows.map(r =>
-          '<tr>' + cols.map(c => `<td class="${c.sticky ? 'sticky-col' : ''}">${renderCell(r, c)}</td>`).join('') + '</tr>'
-        ).join('');
+        $tbody.innerHTML = rows.map(r => '<tr>' + cols.map(c => `<td class="${c.sticky?'sticky-col':''}">${renderCell(r,c)}</td>`).join('') + '</tr>').join('');
       };
 
       const renderInfo = () => {
         const t = State.filteredData.length;
         if (!t) { $info.textContent = ''; return; }
-        const start = (State.currentPage - 1) * State.pageSize + 1;
-        const end = Math.min(State.currentPage * State.pageSize, t);
+        const start = (State.currentPage-1)*State.pageSize+1, end = Math.min(State.currentPage*State.pageSize, t);
         $info.textContent = `${start}\u2013${end} of ${t}`;
       };
 
       const renderPag = () => {
-        const t = State.filteredData.length;
-        const lp = Math.max(1, Math.ceil(t / State.pageSize));
-        $prev.disabled = State.currentPage <= 1;
-        $next.disabled = State.currentPage >= lp;
+        const t = State.filteredData.length, lp = Math.max(1, Math.ceil(t/State.pageSize));
+        $prev.disabled = State.currentPage <= 1; $next.disabled = State.currentPage >= lp;
         let h = '';
-        if (lp <= 7) { for (let i = 1; i <= lp; i++) h += pb(i); }
+        if (lp <= 7) { for (let i=1;i<=lp;i++) h += pb(i); }
         else {
           h += pb(1);
           if (State.currentPage > 3) h += `<span class="px-1 text-xs" style="color:var(--text-muted);">...</span>`;
-          const s = Math.max(2, State.currentPage - 1), e = Math.min(lp - 1, State.currentPage + 1);
-          for (let i = s; i <= e; i++) h += pb(i);
-          if (State.currentPage < lp - 2) h += `<span class="px-1 text-xs" style="color:var(--text-muted);">...</span>`;
+          const s = Math.max(2,State.currentPage-1), e = Math.min(lp-1,State.currentPage+1);
+          for (let i=s;i<=e;i++) h += pb(i);
+          if (State.currentPage < lp-2) h += `<span class="px-1 text-xs" style="color:var(--text-muted);">...</span>`;
           h += pb(lp);
         }
         $pages.innerHTML = h;
@@ -1173,23 +649,11 @@
 
       const pb = (n) => {
         const active = n === State.currentPage;
-        return `<button class="w-8 h-8 rounded-lg text-xs font-medium transition-colors"
-          style="${active ? 'background:var(--accent);color:#fff;font-weight:700;' : 'color:var(--text-sec);'}"
-          data-page="${n}" aria-label="Page ${n}">${n}</button>`;
-      };
-
-      const renderFilterChip = () => {
-        if (!State.activeKPIFilter) { $chipSec.classList.add('hidden'); return; }
-        $chipSec.classList.remove('hidden');
-        $chipLabel.textContent = CONFIG.KPI_FILTER_LABELS[State.activeKPIFilter] || State.activeKPIFilter;
-        $chip.className = 'filter-chip';
+        return `<button class="w-8 h-8 rounded-lg text-xs font-medium transition-colors" style="${active?'background:var(--accent);color:#fff;font-weight:700;':'color:var(--text-sec);'}" data-page="${n}" aria-label="Page ${n}">${n}</button>`;
       };
 
       const showError = (msg, hasCache) => {
-        $errSec.classList.remove('hidden');
-        $errMsg.textContent = msg;
-        $btnC.classList.toggle('hidden', !hasCache);
-        $chipSec.classList.add('hidden');
+        $errSec.classList.remove('hidden'); $errMsg.textContent = msg; $btnC.classList.toggle('hidden', !hasCache);
         document.getElementById('controls-section').classList.add('hidden');
         document.getElementById('table-section').classList.add('hidden');
         document.getElementById('pagination-section').classList.add('hidden');
@@ -1205,135 +669,97 @@
       const setLastUpdated = (ts) => {
         if (!ts) { $upd.classList.add('hidden'); return; }
         const d = new Date(ts);
-        $upd.textContent = `Updated ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        $upd.textContent = `Updated ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
         $upd.classList.remove('hidden');
       };
 
-      const setLoading = (loading) => {
-        const icon = document.getElementById('refresh-icon');
-        if (icon) icon.classList.toggle('spin', loading);
-      };
+      const setLoading = (loading) => { const icon = document.getElementById('refresh-icon'); if (icon) icon.classList.toggle('spin', loading); };
 
       const render = () => {
         const { filteredData, columns, currentPage, pageSize } = State;
-        renderKPIs(MetricEngine.calculate(filteredData));
         renderHead(columns);
-        renderBody(filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize), columns);
+        renderBody(filteredData.slice((currentPage-1)*pageSize, currentPage*pageSize), columns);
         renderInfo();
         renderPag();
-        renderFilterChip();
       };
 
-      return { skeletonKPI, skeletonTable, clearKPI, render, showError, hideError, setLastUpdated, setLoading };
+      return { skeletonKPI, skeletonTable, clearKPI, render, renderKPIs, renderHead, renderBody, renderInfo, renderPag, showError, hideError, setLastUpdated, setLoading };
     })();
 
-    /* ═════════════════ UI CONTROLLER ═══════════════════ */
     const UIController = (() => {
-
       const detectColumns = (data) => {
         if (!data.length) return [...CONFIG.COLUMNS];
         const keys = new Set(Object.keys(data[0]));
         return CONFIG.COLUMNS.filter(c => keys.has(c.key));
       };
 
-      const applyKPIFilter = (data) => {
-        const f = State.activeKPIFilter;
-        if (!f) return data;
-        switch (f) {
-          case 'active_tutors': return data.filter(r => Number(r.is_active) === 1);
-          case 'updated_tutors': return data.filter(r => Number(r.is_updated_last_sunday) === 1);
-          case 'timesheet_tutors': return data.filter(r => Utils.toNum(r.active_timesheet_count) > 0);
-          default: return data;
-        }
-      };
-
       const applyFilters = () => {
         let result = State.rawData;
-        result = applyKPIFilter(result);
+        if (State.filterStatus !== '') { const val = Number(State.filterStatus); result = result.filter(r => Number(r.is_active) === val); }
+        if (State.filterUpdated !== '') { const val = Number(State.filterUpdated); result = result.filter(r => Number(r.is_updated_last_sunday) === val); }
         const q = State.searchQuery.toLowerCase().trim();
-        if (q) {
-          result = result.filter(r =>
-            CONFIG.SEARCHABLE_FIELDS.some(f => String(r[f] || '').toLowerCase().includes(q))
-          );
-        }
+        if (q) { result = result.filter(r => CONFIG.SEARCHABLE_FIELDS.some(f => String(r[f]||'').toLowerCase().includes(q))); }
         State.filteredData = result;
         applySortToFiltered();
         State.currentPage = 1;
       };
 
+      const applyFiltersAndRender = () => { applyFilters(); Renderer.render(); };
+
       const applySortToFiltered = () => {
         if (!State.sortKey) return;
-        const dir = State.sortDir === 'asc' ? 1 : -1;
-        const key = State.sortKey;
+        const dir = State.sortDir === 'asc' ? 1 : -1, key = State.sortKey;
         State.filteredData.sort((a, b) => {
           let va = a[key], vb = b[key];
-          if (va === null || va === undefined) va = '';
-          if (vb === null || vb === undefined) vb = '';
+          if (va === null || va === undefined) va = ''; if (vb === null || vb === undefined) vb = '';
           if (key === 'day_of_week') {
-            const dayOrder = { 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7 };
-            const da = dayOrder[Utils.resolveDay(va)] || 99;
-            const db = dayOrder[Utils.resolveDay(vb)] || 99;
-            return (da - db) * dir;
+            const dayOrder = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4,'Friday':5,'Saturday':6,'Sunday':7};
+            return ((dayOrder[Utils.resolveDay(va)]||99) - (dayOrder[Utils.resolveDay(vb)]||99)) * dir;
           }
-          if (key === 'start_time' || key === 'end_time') {
-            const pa = String(va).padStart(5, '0');
-            const pb2 = String(vb).padStart(5, '0');
-            return pa.localeCompare(pb2) * dir;
-          }
-          if (typeof va === 'number' || typeof vb === 'number' ||
-            (!isNaN(Number(va)) && String(va).trim() !== '' && !isNaN(Number(vb)) && String(vb).trim() !== '')) {
-            return ((Number(va) || 0) - (Number(vb) || 0)) * dir;
-          }
+          if (key === 'start_time' || key === 'end_time') return String(va).padStart(5,'0').localeCompare(String(vb).padStart(5,'0')) * dir;
+          if (typeof va === 'number' || typeof vb === 'number' || (!isNaN(Number(va)) && String(va).trim() !== '' && !isNaN(Number(vb)) && String(vb).trim() !== ''))
+            return ((Number(va)||0) - (Number(vb)||0)) * dir;
           return String(va).toLowerCase().localeCompare(String(vb).toLowerCase()) * dir;
         });
       };
 
-      const toggleKPIFilter = (filterKey) => {
-        State.activeKPIFilter = State.activeKPIFilter === filterKey ? null : filterKey;
-        applyFilters();
-        Renderer.render();
-      };
-
-      const clearKPIFilter = () => {
-        if (!State.activeKPIFilter) return;
-        State.activeKPIFilter = null;
-        applyFilters();
-        Renderer.render();
+      const clearAllFilters = () => {
+        State.filterStatus = ''; State.filterUpdated = ''; State.searchQuery = '';
+        document.getElementById('filter-status').value = '';
+        document.getElementById('filter-updated').value = '';
+        document.getElementById('search-input').value = '';
+        applyFiltersAndRender();
       };
 
       const loadData = async (showLoading = true) => {
-        if (showLoading) {
-          State.isLoading = true;
-          Renderer.skeletonKPI();
-          Renderer.skeletonTable();
-          Renderer.hideError();
-          Renderer.setLoading(true);
-        }
+        if (showLoading) { State.isLoading = true; Renderer.skeletonKPI(); Renderer.skeletonTable(); Renderer.hideError(); Renderer.setLoading(true); }
         try {
           const result = await DataService.fetch();
           State.rawData = result.data;
+          State.rawData.sort((a, b) => String(a.full_name||'').toLowerCase().localeCompare(String(b.full_name||'').toLowerCase()));
           State.columns = detectColumns(result.data);
-          State.sortKey = null;
-          State.sortDir = 'asc';
-          State.searchQuery = '';
-          State.currentPage = 1;
-          State.pageSize = CONFIG.DEFAULT_PAGE_SIZE;
-          State.activeKPIFilter = null;
+          State.sortKey = null; State.sortDir = 'asc';
+          State.searchQuery = ''; State.filterStatus = ''; State.filterUpdated = '';
+          State.currentPage = 1; State.pageSize = CONFIG.DEFAULT_PAGE_SIZE;
           document.getElementById('search-input').value = '';
+          document.getElementById('filter-status').value = '';
+          document.getElementById('filter-updated').value = '';
           document.getElementById('page-size').value = String(CONFIG.DEFAULT_PAGE_SIZE);
           applyFilters();
           State.isLoading = false;
           Renderer.hideError();
-          Renderer.render();
+          Renderer.renderKPIs(MetricEngine.calculate(State.filteredData));
+          Renderer.renderHead(State.columns);
+          Renderer.renderBody(State.filteredData.slice(0, State.pageSize), State.columns);
+          Renderer.renderInfo();
+          Renderer.renderPag();
           Renderer.setLastUpdated(result.fromCache ? DataService.getCache()?.ts : Date.now());
           Renderer.setLoading(false);
           if (result.stale) Utils.toast('Showing cached data \u2014 fetch failed', 'error');
           else if (result.fromCache) Utils.toast('Loaded from cache', 'info');
           else Utils.toast(`${result.data.length} entries loaded`, 'success');
         } catch (err) {
-          State.isLoading = false;
-          Renderer.setLoading(false);
-          Renderer.clearKPI();
+          State.isLoading = false; Renderer.setLoading(false); Renderer.clearKPI();
           Renderer.showError(err.message || 'Network error.', !!DataService.getCache());
         }
       };
@@ -1343,102 +769,45 @@
         if (!data.length) { Utils.toast('No data to export', 'error'); return; }
         const cols = State.columns;
         const hdr = cols.map(c => `"${c.label}"`).join(',');
-        const rows = data.map(r =>
-          cols.map(c => {
-            let v = r[c.key];
-            if (v == null) v = '';
-            return `"${String(v).replace(/"/g, '""')}"`;
-          }).join(',')
-        );
-        const blob = new Blob(['\uFEFF' + [hdr, ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `tutor_tracker_${new Date().toISOString().slice(0, 10)}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
-        Utils.toast(`${data.length} entries exported`, 'success');
+        const rows = data.map(r => cols.map(c => { let v = r[c.key]; if (v == null) v = ''; return `"${String(v).replace(/"/g,'""')}"`; }).join(','));
+        const blob = new Blob(['\uFEFF' + [hdr,...rows].join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob), a = document.createElement('a');
+        a.href = url; a.download = `tutor_tracker_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+        URL.revokeObjectURL(url); Utils.toast(`${data.length} entries exported`, 'success');
       };
 
       const toggleTheme = () => {
         const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
-        try { localStorage.setItem('tutoring_theme', next); } catch (_) { }
+        try { localStorage.setItem('tutoring_theme', next); } catch(_){}
       };
 
       const initTheme = () => {
-        try {
-          const s = localStorage.getItem('tutoring_theme');
-          if (s) { document.documentElement.setAttribute('data-theme', s); return; }
-        } catch (_) { }
-        if (window.matchMedia('(prefers-color-scheme: light)').matches)
-          document.documentElement.setAttribute('data-theme', 'light');
+        try { const s = localStorage.getItem('tutoring_theme'); if (s) { document.documentElement.setAttribute('data-theme', s); return; } } catch(_){}
+        if (window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.setAttribute('data-theme', 'light');
       };
 
       const bindEvents = () => {
-        document.getElementById('kpi-section').addEventListener('click', (e) => {
-          const card = e.target.closest('[data-kpi-filter]');
-          if (!card) return;
-          toggleKPIFilter(card.getAttribute('data-kpi-filter'));
-        });
-        document.getElementById('kpi-section').addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            const card = e.target.closest('[data-kpi-filter]');
-            if (!card) return;
-            e.preventDefault();
-            toggleKPIFilter(card.getAttribute('data-kpi-filter'));
-          }
-        });
-        document.getElementById('filter-chip-clear').addEventListener('click', clearKPIFilter);
-
-        document.getElementById('search-input').addEventListener('input', Utils.debounce(e => {
-          State.searchQuery = e.target.value;
-          applyFilters();
-          Renderer.render();
-        }, 250));
-        document.getElementById('btn-clear-search').addEventListener('click', () => {
-          State.searchQuery = '';
-          document.getElementById('search-input').value = '';
-          applyFilters();
-          Renderer.render();
-        });
-
-        document.getElementById('page-size').addEventListener('change', e => {
-          State.pageSize = parseInt(e.target.value, 10) || 10;
-          State.currentPage = 1;
-          Renderer.render();
-        });
-
+        document.getElementById('filter-status').addEventListener('change', e => { State.filterStatus = e.target.value; applyFiltersAndRender(); });
+        document.getElementById('filter-updated').addEventListener('change', e => { State.filterUpdated = e.target.value; applyFiltersAndRender(); });
+        document.getElementById('search-input').addEventListener('input', Utils.debounce(e => { State.searchQuery = e.target.value; applyFiltersAndRender(); }, 250));
+        document.getElementById('btn-clear-search').addEventListener('click', clearAllFilters);
+        document.getElementById('page-size').addEventListener('change', e => { State.pageSize = parseInt(e.target.value,10)||10; State.currentPage = 1; Renderer.render(); });
         document.getElementById('table-head').addEventListener('click', e => {
-          const th = e.target.closest('th[data-sort]');
-          if (!th) return;
+          const th = e.target.closest('th[data-sort]'); if (!th) return;
           const key = th.getAttribute('data-sort');
           if (State.sortKey === key) State.sortDir = State.sortDir === 'asc' ? 'desc' : 'asc';
           else { State.sortKey = key; State.sortDir = 'asc'; }
-          applySortToFiltered();
-          State.currentPage = 1;
-          Renderer.render();
+          applySortToFiltered(); State.currentPage = 1; Renderer.render();
         });
-
         document.getElementById('page-numbers').addEventListener('click', e => {
-          const btn = e.target.closest('[data-page]');
-          if (!btn) return;
-          State.currentPage = parseInt(btn.getAttribute('data-page'), 10);
-          Renderer.render();
-          document.getElementById('table-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          const btn = e.target.closest('[data-page]'); if (!btn) return;
+          State.currentPage = parseInt(btn.getAttribute('data-page'), 10); Renderer.render();
+          document.getElementById('table-section').scrollIntoView({ behavior:'smooth', block:'nearest' });
         });
-        document.getElementById('btn-prev').addEventListener('click', () => {
-          if (State.currentPage > 1) { State.currentPage--; Renderer.render(); }
-        });
-        document.getElementById('btn-next').addEventListener('click', () => {
-          const lp = Math.ceil(State.filteredData.length / State.pageSize);
-          if (State.currentPage < lp) { State.currentPage++; Renderer.render(); }
-        });
-
-        document.getElementById('btn-refresh').addEventListener('click', () => {
-          try { localStorage.removeItem(CONFIG.CACHE_KEY); } catch (_) { }
-          loadData(true);
-        });
+        document.getElementById('btn-prev').addEventListener('click', () => { if (State.currentPage > 1) { State.currentPage--; Renderer.render(); } });
+        document.getElementById('btn-next').addEventListener('click', () => { const lp = Math.ceil(State.filteredData.length/State.pageSize); if (State.currentPage < lp) { State.currentPage++; Renderer.render(); } });
+        document.getElementById('btn-refresh').addEventListener('click', () => { try { localStorage.removeItem(CONFIG.CACHE_KEY); } catch(_){} loadData(true); });
         document.getElementById('btn-export').addEventListener('click', exportCSV);
         document.getElementById('btn-theme').addEventListener('click', toggleTheme);
         document.getElementById('btn-retry').addEventListener('click', () => loadData(true));
@@ -1446,43 +815,34 @@
           const cached = DataService.loadCached();
           if (cached) {
             State.rawData = cached;
+            State.rawData.sort((a, b) => String(a.full_name||'').toLowerCase().localeCompare(String(b.full_name||'').toLowerCase()));
             State.columns = detectColumns(cached);
-            State.searchQuery = '';
-            State.currentPage = 1;
-            State.activeKPIFilter = null;
+            State.searchQuery = ''; State.filterStatus = ''; State.filterUpdated = ''; State.currentPage = 1;
             document.getElementById('search-input').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-updated').value = '';
             applyFilters();
             Renderer.hideError();
-            Renderer.render();
+            Renderer.renderKPIs(MetricEngine.calculate(State.filteredData));
+            Renderer.renderHead(State.columns);
+            Renderer.renderBody(State.filteredData.slice(0, State.pageSize), State.columns);
+            Renderer.renderInfo();
+            Renderer.renderPag();
             Utils.toast('Loaded from cache', 'info');
           }
         });
-
         document.addEventListener('keydown', e => {
           if (e.key === 'Escape') {
-            if (State.activeKPIFilter) { clearKPIFilter(); return; }
-            if (document.activeElement?.id === 'search-input') {
-              State.searchQuery = '';
-              document.getElementById('search-input').value = '';
-              applyFilters();
-              Renderer.render();
-              document.getElementById('search-input').blur();
-            }
+            const hasFilters = State.filterStatus !== '' || State.filterUpdated !== '' || State.searchQuery.trim();
+            if (hasFilters) { clearAllFilters(); return; }
+            if (document.activeElement?.id === 'search-input') document.getElementById('search-input').blur();
           }
-          if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            document.getElementById('search-input').focus();
-          }
+          if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); document.getElementById('search-input').focus(); }
         });
       };
 
-      const init = () => {
-        initTheme();
-        bindEvents();
-        loadData(true);
-      };
-
-      return { init };
+      const init = () => { initTheme(); bindEvents(); loadData(true); };
+      return { init, applyFiltersAndRender };
     })();
 
     document.addEventListener('DOMContentLoaded', UIController.init);

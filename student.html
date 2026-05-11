@@ -14,7 +14,6 @@
     rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js Library -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 
   <script>
@@ -227,11 +226,6 @@
       color: var(--danger);
     }
 
-    .badge-unknown {
-      background: var(--bg-raised);
-      color: var(--text-muted);
-    }
-
     .kpi-bar {
       height: 3px;
       border-radius: 2px;
@@ -358,49 +352,14 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .period-group {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      padding: 3px;
-      border-radius: 10px;
-      background: var(--bg-raised);
-      border: 1px solid var(--border);
-    }
-
-    .period-tab {
-      padding: 5px 14px;
-      border-radius: 8px;
-      border: none;
-      font-size: 0.72rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--text-muted);
-      background: transparent;
-      transition: all 0.2s;
-      font-family: 'DM Sans', sans-serif;
-    }
-
-    .period-tab:hover {
-      color: var(--text-sec);
-    }
-
-    .period-tab.active {
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 1px 4px rgba(45, 212, 191, 0.25);
-    }
-
     .kpi-warning-icon {
       background: var(--warning-bg) !important;
       color: var(--warning) !important;
     }
 
-    /* KPI Card clickable */
     .kpi-card {
-      cursor: pointer;
       border: 1.5px solid var(--border);
-      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
       position: relative;
       overflow: hidden;
     }
@@ -409,90 +368,6 @@
       border-color: var(--border-strong);
       background: var(--card-hover);
       transform: translateY(-1px);
-    }
-
-    .kpi-card.kpi-active {
-      border-color: var(--accent);
-      background: var(--accent-bg);
-      box-shadow: 0 0 0 1px var(--accent-border), 0 2px 12px rgba(45, 212, 191, 0.08);
-    }
-
-    .kpi-card.kpi-active::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--accent);
-      border-radius: 0 0 2px 2px;
-    }
-
-    .kpi-card .kpi-hint {
-      position: absolute;
-      bottom: 8px;
-      right: 12px;
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .kpi-card:hover .kpi-hint {
-      opacity: 1;
-    }
-
-    .kpi-card.kpi-active .kpi-hint {
-      opacity: 1;
-      color: var(--accent);
-    }
-
-    /* Active filter chip */
-    .filter-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px 5px 14px;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      background: var(--accent-bg);
-      border: 1px solid var(--accent-border);
-      color: var(--accent);
-      animation: chipIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .filter-chip button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: none;
-      background: var(--accent-border);
-      color: var(--accent);
-      cursor: pointer;
-      font-size: 0.65rem;
-      line-height: 1;
-      transition: background 0.15s;
-    }
-
-    .filter-chip button:hover {
-      background: var(--accent);
-      color: #0B0D13;
-    }
-
-    @keyframes chipIn {
-      from {
-        opacity: 0;
-        transform: scale(0.9) translateY(-4px);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
     }
 
     .spin {
@@ -505,7 +380,6 @@
       }
     }
 
-    /* Chart Section Skeleton */
     .chart-skeleton {
       width: 100%;
       height: 240px;
@@ -522,6 +396,34 @@
       background: linear-gradient(90deg, transparent 0%, var(--skel-shine) 50%, transparent 100%);
       transform: translateX(-100%);
       animation: shimmer 1.6s ease-in-out infinite;
+    }
+
+    .filter-select {
+      padding: 7px 30px 7px 10px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%235C6178' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      min-width: 0;
+    }
+
+    .filter-select:focus {
+      border-color: var(--accent-border);
+    }
+
+    .filter-select option {
+      background: var(--card);
+      color: var(--text);
     }
   </style>
 </head>
@@ -618,21 +520,8 @@
   </header>
 
   <main class="max-w-[1440px] mx-auto px-4 sm:px-6 pb-16">
-    <section id="period-section" class="mt-5 flex flex-wrap items-center gap-3">
-      <div class="period-group" role="tablist" aria-label="Time period filter">
-        <button class="period-tab" data-period="all" role="tab" aria-selected="false">All Time</button>
-        <button class="period-tab active" data-period="monthly" role="tab" aria-selected="true">Monthly</button>
-        <button class="period-tab" data-period="quarterly" role="tab" aria-selected="false">Quarterly</button>
-      </div>
-      <select id="period-select" aria-label="Select period"
-        class="px-3 py-[7px] rounded-lg text-xs border outline-none cursor-pointer transition-colors"
-        style="background:var(--card);border-color:var(--border);color:var(--text);min-width:140px;">
-        <option value="">Loading...</option>
-      </select>
-      <span id="period-count" class="text-xs" style="color:var(--text-muted);"></span>
-    </section>
 
-    <section id="kpi-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-6"
+    <section id="kpi-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6"
       aria-label="Key metrics"></section>
 
     <section id="error-section" class="hidden mt-10 text-center py-16 rounded-xl border"
@@ -659,26 +548,21 @@
       </div>
     </section>
 
-    <!-- Charts Section: Donut Charts -->
+    <!-- Charts Section -->
     <section id="charts-section" class="mt-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-        <!-- Program Name Chart -->
         <div class="rounded-xl border p-4 sm:p-5 flex flex-col"
           style="border-color:var(--border);background:var(--card);">
           <div class="flex items-center justify-between mb-2">
-            <h3 class="font-display font-semibold text-sm" style="color:var(--text);">Program Name</h3>
+            <h3 class="font-display font-semibold text-sm" style="color:var(--text);">Program</h3>
             <span class="text-[0.62rem] font-medium px-2 py-0.5 rounded-full"
-              style="background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);">Top
-              5</span>
+              style="background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);">Dist.</span>
           </div>
           <div class="relative flex-1 flex items-center justify-center" style="min-height:240px;">
             <div id="chart-program-skeleton" class="chart-skeleton absolute inset-0"></div>
             <canvas id="chart-program"></canvas>
           </div>
         </div>
-
-        <!-- Curriculum Chart -->
         <div class="rounded-xl border p-4 sm:p-5 flex flex-col"
           style="border-color:var(--border);background:var(--card);">
           <div class="flex items-center justify-between mb-2">
@@ -691,8 +575,6 @@
             <canvas id="chart-curriculum"></canvas>
           </div>
         </div>
-
-        <!-- Package Chart -->
         <div class="rounded-xl border p-4 sm:p-5 flex flex-col"
           style="border-color:var(--border);background:var(--card);">
           <div class="flex items-center justify-between mb-2">
@@ -705,41 +587,44 @@
             <canvas id="chart-package"></canvas>
           </div>
         </div>
-
       </div>
     </section>
 
-    <!-- Active filter chip -->
-    <section id="filter-chip-section" class="hidden mt-5 flex items-center gap-2">
-      <span class="text-[0.65rem] font-medium" style="color:var(--text-muted);">Filtered by:</span>
-      <div id="filter-chip" class="filter-chip">
-        <span id="filter-chip-label"></span>
-        <button id="filter-chip-clear" aria-label="Clear filter">&times;</button>
-      </div>
-    </section>
-
-    <section id="controls-section"
-      class="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      <div class="relative w-full sm:w-80">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="14" height="14" viewBox="0 0 24 24" fill="none"
-          stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input id="search-input" type="text" placeholder="Search student, school, sales..." aria-label="Search"
-          class="w-full pl-9 pr-3 py-2 rounded-lg text-xs border outline-none transition-colors"
-          style="background:var(--card);border-color:var(--border);color:var(--text);"
-          onfocus="this.style.borderColor='var(--accent-border)'" onblur="this.style.borderColor='var(--border)'">
-      </div>
-      <div class="flex items-center gap-3">
-        <span id="table-info" class="text-xs" style="color:var(--text-muted);"></span>
-        <select id="page-size" aria-label="Rows per page"
-          class="px-3 py-2 rounded-lg text-xs border outline-none cursor-pointer transition-colors"
-          style="background:var(--card);border-color:var(--border);color:var(--text);">
-          <option value="10">10 rows</option>
-          <option value="20">20 rows</option>
-          <option value="50">50 rows</option>
-        </select>
+    <section id="controls-section" class="mt-4 flex flex-col gap-3">
+      <div class="flex items-center gap-2 sm:gap-1 justify-between">
+        <div class="flex gap-1 w-full">
+          <select id="filter-status" aria-label="Filter by status" class="filter-select">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="expiring">Expiring Soon</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <select id="filter-program" aria-label="Filter by program" class="filter-select">
+            <option value="">All Program</option>
+          </select>
+          <select id="filter-curriculum" aria-label="Filter by curriculum" class="filter-select">
+            <option value="">All Curriculum</option>
+          </select>
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input id="search-input" type="text" placeholder="Search student, school, sales..." aria-label="Search"
+              class="w-full pl-9 pr-3 py-[7px] rounded-lg text-xs border outline-none transition-colors"
+              style="background:var(--card);border-color:var(--border);color:var(--text);"
+              onfocus="this.style.borderColor='var(--accent-border)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+        </div>
+        <div class="flex items-center w-full justify-end gap-1">
+          <span id="table-info" class="text-xs" style="color:var(--text-muted);"></span>
+          <select id="page-size" aria-label="Rows per page" class="filter-select">
+            <option value="10">10 rows</option>
+            <option value="20">20 rows</option>
+            <option value="50">50 rows</option>
+          </select>
+        </div>
       </div>
     </section>
 
@@ -760,7 +645,7 @@
         </svg>
         <p class="text-xs font-medium" style="color:var(--text-muted);">No matching records found</p>
         <button id="btn-clear-search" class="mt-3 text-xs font-semibold transition-colors"
-          style="color:var(--accent);">Clear search</button>
+          style="color:var(--accent);">Clear filters</button>
       </div>
     </section>
 
@@ -802,7 +687,6 @@
       DEFAULT_PAGE_SIZE: 10,
       FETCH_TIMEOUT: 15000,
 
-      FILTER_DATE_FIELD: 'latest_update',
       EXPIRING_THRESHOLD: 0.2,
 
       COLUMNS: [
@@ -811,9 +695,9 @@
         { key: 'student_grade', label: 'Grade', type: 'text', sticky: false },
         { key: 'student_school', label: 'School', type: 'text', sticky: false },
         { key: 'sales_pic_name', label: 'Sales PIC', type: 'text', sticky: false },
-        { key: 'program_name', label: 'Program Name', type: 'text', sticky: false }, // Added for display
-        { key: 'curriculum', label: 'Curriculum', type: 'text', sticky: false }, // Added for display
-        { key: 'package_name', label: 'Package', type: 'text', sticky: false }, // Added for display
+        { key: 'main_prog', label: 'Program', type: 'text', sticky: false },
+        { key: 'curriculum', label: 'Curriculum', type: 'text', sticky: false },
+        { key: 'package', label: 'Package', type: 'text', sticky: false },
         { key: 'duration', label: 'Duration', type: 'duration', sticky: false },
         { key: 'time_spent', label: 'Time Spent', type: 'duration', sticky: false },
         { key: 'remaining_time', label: 'Remaining', type: 'remaining', sticky: false },
@@ -821,23 +705,17 @@
         { key: 'latest_update', label: 'Latest Update', type: 'latest_update', sticky: false },
       ],
 
-      SEARCHABLE_FIELDS: ['student_name', 'student_school', 'sales_pic_name', 'program_name', 'curriculum', 'package_name'],
+      SEARCHABLE_FIELDS: ['student_name', 'student_school', 'sales_pic_name', 'main_prog', 'curriculum', 'package'],
 
-      /* Label mapping untuk filter chip */
-      KPI_FILTER_LABELS: {
-        active_packages: 'Active Packages',
-        active_students: 'Active Students',
-        expiring_soon: 'Expiring Soon',
-        completed: 'Completed',
-        total_alumni: 'Total Alumni',
-      },
+      CHART_PALETTE: [
+        '#818CF8', '#34D399', '#FBBF24', '#F87171', '#38BDF8',
+        '#A78BFA', '#FB923C', '#2DD4BF', '#F472B6', '#86EFAC',
+        '#FDE68A', '#93C5FD', '#C4B5FD', '#FCA5A5', '#67E8F9',
+      ],
 
       RESPONSE_TRANSFORM: (raw) => {
         if (!raw) return [];
         if (!Array.isArray(raw) && raw.data && Array.isArray(raw.data)) {
-          if (raw.filter_date_field) {
-            CONFIG.FILTER_DATE_FIELD = raw.filter_date_field;
-          }
           raw = raw.data;
         }
         if (Array.isArray(raw) && raw.length > 0 && Array.isArray(raw[0])) {
@@ -852,8 +730,6 @@
         return [];
       },
     };
-
-    const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     /* ══════════════════════════════════════════════════════════════
        UTILITIES
@@ -897,32 +773,19 @@
     };
 
     /* ══════════════════════════════════════════════════════════════
-       CHART MANAGER (DONUT CHARTS)
+       CHART MANAGER
        ══════════════════════════════════════════════════════════════ */
     const ChartManager = (() => {
       let chartProgram = null;
       let chartCurriculum = null;
       let chartPackage = null;
 
-      // Nice palette for charts
-      const palette = [
-        '#AEBFF5', // very soft blue
-        '#BFE7DD', // pale mint
-        '#D4F2C8', // soft green
-        '#FFF1C9', // pale yellow
-        '#FFD6D6', // soft peach
-        '#FAD4EA', // very soft pink
-        '#DDD6F7', // light lavender
-        '#D6F0FF', // airy sky
-      ];
-
-      const getColors = () => {
-        return {
-          text: Utils.getCssVar('--text'),
-          textSec: Utils.getCssVar('--text-sec'),
-          grid: Utils.getCssVar('--border'),
-        };
-      };
+      const getColors = () => ({
+        text: Utils.getCssVar('--text'),
+        textSec: Utils.getCssVar('--text-sec'),
+        grid: Utils.getCssVar('--border'),
+        card: Utils.getCssVar('--card'),
+      });
 
       const destroyCharts = () => {
         if (chartProgram) { chartProgram.destroy(); chartProgram = null; }
@@ -930,59 +793,57 @@
         if (chartPackage) { chartPackage.destroy(); chartPackage = null; }
       };
 
+      const getColorsForCount = (count) => {
+        const pal = CONFIG.CHART_PALETTE;
+        const colors = [];
+        for (let i = 0; i < count; i++) colors.push(pal[i % pal.length]);
+        return colors;
+      };
+
       const update = (data) => {
-        if (!data || data.length === 0) {
-          destroyCharts();
-          return;
-        }
+        if (!data || data.length === 0) { destroyCharts(); return; }
         const colors = getColors();
 
-        // 1. Program Name (Top 5 + Others)
-        const progCounts = {};
-        data.forEach(r => {
-          const name = r.program_name || 'Unknown';
-          progCounts[name] = (progCounts[name] || 0) + 1;
-        });
-        const sortedProg = Object.entries(progCounts).sort((a, b) => b[1] - a[1]);
-        const top5 = sortedProg.slice(0, 5);
-        const others = sortedProg.slice(5);
-        if (others.length > 0) {
-          top5.push(['Others', others.reduce((s, c) => s + c[1], 0)]);
-        }
+        const countBy = (key) => {
+          const map = {};
+          data.forEach(r => {
+            const v = r[key] || 'Unknown';
+            map[v] = (map[v] || 0) + 1;
+          });
+          return Object.entries(map).sort((a, b) => a[0].toLowerCase().localeCompare(b[0].toLowerCase()));
+        };
 
-        // 2. Curriculum
-        const currCounts = {};
-        data.forEach(r => {
-          const cur = r.curriculum || 'Unknown';
-          currCounts[cur] = (currCounts[cur] || 0) + 1;
-        });
-        const currData = Object.entries(currCounts).sort((a, b) => b[1] - a[1]);
+        // Program — Top 5 alphabetically from main_prog, then Others
+        const progAll = countBy('main_prog');
+        const top5 = progAll.slice(0, 5);
+        const rest = progAll.slice(5);
+        if (rest.length > 0) top5.push(['Others', rest.reduce((s, c) => s + c[1], 0)]);
 
-        // 3. Package
-        const pkgCounts = {};
-        data.forEach(r => {
-          const pkg = r.package || 'Unknown';
-          pkgCounts[pkg] = (pkgCounts[pkg] || 0) + 1;
-        });
-        const pkgData = Object.entries(pkgCounts).sort((a, b) => b[1] - a[1]);
+        const currData = countBy('curriculum');
+        const pkgData = countBy('package');
 
-        // Render Helper
-        const renderDoughnut = (ctxId, chartInstance, labels, values, title) => {
+        const makeDoughnut = (ctxId, existing, labels, values) => {
           const ctx = document.getElementById(ctxId);
-          if (!ctx) return;
-          if (chartInstance) chartInstance.destroy();
+          if (!ctx) return null;
+          if (existing) existing.destroy();
+          const bgColors = getColorsForCount(labels.length);
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          const tooltipBg = isDark ? '#1C1F2E' : '#FFFFFF';
+          const tooltipTitle = isDark ? '#E2E4EA' : '#14161E';
+          const tooltipBody = isDark ? '#9298AD' : '#555868';
+          const tooltipBorder = isDark ? '#323652' : '#DDE0E8';
 
           return new Chart(ctx, {
             type: 'doughnut',
             data: {
-              labels: labels,
+              labels,
               datasets: [{
                 data: values,
-                backgroundColor: palette,
-                borderColor: Utils.getCssVar('--card'),
+                backgroundColor: bgColors,
+                borderColor: colors.card,
                 borderWidth: 2,
-                hoverOffset: 4
-              }]
+                hoverOffset: 4,
+              }],
             },
             options: {
               responsive: true,
@@ -990,31 +851,37 @@
               plugins: {
                 legend: {
                   position: 'bottom',
-                  labels: { color: colors.textSec, font: { size: 10, family: "'DM Sans', sans-serif" }, boxWidth: 10, usePointStyle: true }
+                  labels: {
+                    color: colors.textSec,
+                    font: { size: 10, family: "'DM Sans', sans-serif" },
+                    boxWidth: 10,
+                    usePointStyle: true,
+                    padding: 12,
+                  },
                 },
                 tooltip: {
-                  backgroundColor: colors.grid === '#24273A' ? '#161923' : '#fff',
-                  titleColor: colors.text,
-                  bodyColor: colors.textSec,
-                  borderColor: colors.grid,
+                  backgroundColor: tooltipBg,
+                  titleColor: tooltipTitle,
+                  bodyColor: tooltipBody,
+                  borderColor: tooltipBorder,
                   borderWidth: 1,
                   padding: 10,
-                  callbacks: { label: (c) => ` ${c.label}: ${c.raw} students` }
-                }
+                  cornerRadius: 8,
+                  callbacks: { label: (c) => ` ${c.label}: ${c.raw} students` },
+                },
               },
-              layout: { padding: 10 }
-            }
+              layout: { padding: 10 },
+            },
           });
         };
 
-        chartProgram = renderDoughnut('chart-program', chartProgram, top5.map(x => x[0]), top5.map(x => x[1]), 'Program');
-        chartCurriculum = renderDoughnut('chart-curriculum', chartCurriculum, currData.map(x => x[0]), currData.map(x => x[1]), 'Curriculum');
-        chartPackage = renderDoughnut('chart-package', chartPackage, pkgData.map(x => x[0]), pkgData.map(x => x[1]), 'Package');
+        chartProgram = makeDoughnut('chart-program', chartProgram, top5.map(x => x[0]), top5.map(x => x[1]));
+        chartCurriculum = makeDoughnut('chart-curriculum', chartCurriculum, currData.map(x => x[0]), currData.map(x => x[1]));
+        chartPackage = makeDoughnut('chart-package', chartPackage, pkgData.map(x => x[0]), pkgData.map(x => x[1]));
       };
 
       const hideSkeletons = () => {
-        const ids = ['chart-program-skeleton', 'chart-curriculum-skeleton', 'chart-package-skeleton'];
-        ids.forEach(id => {
+        ['chart-program-skeleton', 'chart-curriculum-skeleton', 'chart-package-skeleton'].forEach(id => {
           const el = document.getElementById(id);
           if (el) el.style.display = 'none';
         });
@@ -1023,49 +890,8 @@
       return {
         update,
         hideSkeletons,
-        updateTheme: () => {
-          // Re-render with current theme colors by calling update with current data
-          if (State.filteredData && State.filteredData.length > 0) {
-            update(State.filteredData);
-          }
-        }
+        updateTheme: () => { if (State.filteredData && State.filteredData.length > 0) update(State.filteredData); },
       };
-    })();
-
-    /* ══════════════════════════════════════════════════════════════
-       PERIOD HELPERS
-       ══════════════════════════════════════════════════════════════ */
-    const PeriodHelper = (() => {
-      const extract = (dateVal, mode) => {
-        if (!dateVal) return null;
-        const d = new Date(dateVal);
-        if (isNaN(d.getTime())) return null;
-        if (mode === 'monthly') return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        if (mode === 'quarterly') return `${d.getFullYear()}-Q${Math.floor(d.getMonth() / 3) + 1}`;
-        return null;
-      };
-      const label = (key, mode) => {
-        if (!key) return '';
-        if (mode === 'monthly') { const [y, m] = key.split('-'); return `${MONTH_NAMES[parseInt(m, 10) - 1]} ${y}`; }
-        if (mode === 'quarterly') return key.replace('-', ' ');
-        return key;
-      };
-      const extractAll = (data, field, mode) => {
-        const set = new Set();
-        data.forEach(row => { const p = extract(row[field], mode); if (p) set.add(p); });
-        return [...set].sort().reverse();
-      };
-      const matches = (row, field, mode, periodValue) => {
-        if (!periodValue) return true;
-        return extract(row[field], mode) === periodValue;
-      };
-      const currentPeriod = (mode) => {
-        const now = new Date();
-        if (mode === 'monthly') return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-        if (mode === 'quarterly') return `${now.getFullYear()}-Q${Math.floor(now.getMonth() / 3) + 1}`;
-        return null;
-      };
-      return { extract, label, extractAll, matches, currentPeriod };
     })();
 
     /* ══════════════════════════════════════════════════════════════
@@ -1080,72 +906,69 @@
       sortKey: null,
       sortDir: 'asc',
       searchQuery: '',
-      periodMode: 'monthly',
-      periodValue: null,
       isLoading: true,
-      activeKPIFilter: null,
+      statusFilter: '',
+      programFilter: '',
+      curriculumFilter: '',
     };
 
     /* ══════════════════════════════════════════════════════════════
        DEMO DATA
        ══════════════════════════════════════════════════════════════ */
     const DemoData = (() => {
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = now.getMonth();
-      const d = (day) => new Date(y, m, day).toISOString().slice(0, 10);
-
-      const students = [
-        { name: 'Aisyah Putri', grade: 'Grade 10', school: 'SMP Negeri 1 Jakarta', sales: 'Rina Wati', uuid: 's1' },
-        { name: 'Budi Santoso', grade: 'Grade 11', school: 'SMA Labschool Rawamangun', sales: 'Dedi Kurniawan', uuid: 's2' },
-        { name: 'Citra Dewi', grade: 'Grade 9', school: 'SMP Cikal Serpong', sales: 'Rina Wati', uuid: 's3' },
-        { name: 'Dimas Prasetyo', grade: 'Grade 12', school: 'SMA Negeri 3 Bandung', sales: 'Anita Sari', uuid: 's4' },
-        { name: 'Ela Fitriani', grade: 'Grade 10', school: 'SMA Al-Izhar Pondok Labu', sales: 'Dedi Kurniawan', uuid: 's5' },
-        { name: 'Fajar Hidayat', grade: 'Grade 8', school: 'SMP Negeri 5 Surabaya', sales: 'Anita Sari', uuid: 's6' },
-        { name: 'Galih Pratama', grade: 'Grade 11', school: 'SMA Cendekia Harapan', sales: 'Rina Wati', uuid: 's7' },
-        { name: 'Hana Safira', grade: 'Grade 7', school: 'SMP Labschool Cibubur', sales: 'Dedi Kurniawan', uuid: 's8' },
-        { name: 'Irfan Maulana', grade: 'Grade 12', school: 'SMA Negeri 8 Jakarta', sales: 'Anita Sari', uuid: 's9' },
-        { name: 'Jasmine Azzahra', grade: 'Grade 9', school: 'SMP Al-Azhar 1', sales: 'Rina Wati', uuid: 's10' },
-        { name: 'Kevin Aditya', grade: 'Grade 10', school: 'SMA Negeri 2 Tangerang', sales: 'Dedi Kurniawan', uuid: 's11' },
-        { name: 'Luna Maharani', grade: 'Grade 11', school: 'SMA Global Mandiri', sales: 'Anita Sari', uuid: 's12' },
-        { name: 'Muhammad Rizki', grade: 'Grade 12', school: 'SMA Negeri 1 Bekasi', sales: 'Rina Wati', uuid: 's13' },
-        { name: 'Nadia Putri', grade: 'Grade 9', school: 'SMP Negeri 3 Depok', sales: 'Dedi Kurniawan', uuid: 's14' },
-        { name: 'Oscar Tanujaya', grade: 'Grade 11', school: 'SMA Kanisius Jakarta', sales: 'Anita Sari', uuid: 's15' },
-      ];
-
       const generate = () => {
-        const data = [];
-        let tid = 1001, cpid = 2001;
-        const programs = ['Math Regular', 'Physics Intensive', 'Chemistry IB', 'English IELTS', 'Biology Cambridge', 'Coding for Kids', 'Math Advanced', 'Physics Foundation'];
+        const now = new Date();
+        const y = now.getFullYear(), m = now.getMonth();
+        const d = (day) => new Date(y, m, day).toISOString().slice(0, 10);
+
+        const students = [
+          { name: 'Aisyah Putri', grade: 'Grade 10', school: 'SMP Negeri 1 Jakarta', sales: 'Rina Wati', uuid: 's1' },
+          { name: 'Budi Santoso', grade: 'Grade 11', school: 'SMA Labschool Rawamangun', sales: 'Dedi Kurniawan', uuid: 's2' },
+          { name: 'Citra Dewi', grade: 'Grade 9', school: 'SMP Cikal Serpong', sales: 'Rina Wati', uuid: 's3' },
+          { name: 'Dimas Prasetyo', grade: 'Grade 12', school: 'SMA Negeri 3 Bandung', sales: 'Anita Sari', uuid: 's4' },
+          { name: 'Ela Fitriani', grade: 'Grade 10', school: 'SMA Al-Izhar Pondok Labu', sales: 'Dedi Kurniawan', uuid: 's5' },
+          { name: 'Fajar Hidayat', grade: 'Grade 8', school: 'SMP Negeri 5 Surabaya', sales: 'Anita Sari', uuid: 's6' },
+          { name: 'Galih Pratama', grade: 'Grade 11', school: 'SMA Cendekia Harapan', sales: 'Rina Wati', uuid: 's7' },
+          { name: 'Hana Safira', grade: 'Grade 7', school: 'SMP Labschool Cibubur', sales: 'Dedi Kurniawan', uuid: 's8' },
+          { name: 'Irfan Maulana', grade: 'Grade 12', school: 'SMA Negeri 8 Jakarta', sales: 'Anita Sari', uuid: 's9' },
+          { name: 'Jasmine Azzahra', grade: 'Grade 9', school: 'SMP Al-Azhar 1', sales: 'Rina Wati', uuid: 's10' },
+          { name: 'Kevin Aditya', grade: 'Grade 10', school: 'SMA Negeri 2 Tangerang', sales: 'Dedi Kurniawan', uuid: 's11' },
+          { name: 'Luna Maharani', grade: 'Grade 11', school: 'SMA Global Mandiri', sales: 'Anita Sari', uuid: 's12' },
+          { name: 'Muhammad Rizki', grade: 'Grade 12', school: 'SMA Negeri 1 Bekasi', sales: 'Rina Wati', uuid: 's13' },
+          { name: 'Nadia Putri', grade: 'Grade 9', school: 'SMP Negeri 3 Depok', sales: 'Dedi Kurniawan', uuid: 's14' },
+          { name: 'Oscar Tanujaya', grade: 'Grade 11', school: 'SMA Kanisius Jakarta', sales: 'Anita Sari', uuid: 's15' },
+        ];
+
+        const mainProgs = ['Math Regular', 'Physics Intensive', 'Chemistry IB', 'English IELTS', 'Biology Cambridge', 'Coding for Kids', 'Math Advanced', 'Physics Foundation'];
         const curriculums = ['Cambridge', 'IB', 'National', 'AP', 'Unknown'];
         const packages = ['Silver', 'Gold', 'Platinum', 'Trial'];
+        const durations = [1200, 2400, 1800, 900, 3000, 1500, 2100, 1200, 3600, 1800, 900, 2400, 1200, 600, 1800];
+        const spent = [1080, 2160, 1500, 810, 2700, 1350, 1890, 1080, 3240, 1620, 765, 2160, 1200, 600, 1800];
 
-        students.forEach((s, idx) => {
-          const isActive = idx < 12;
-          const duration = [1200, 2400, 1800, 900, 3000, 1500, 2100, 1200, 3600, 1800, 900, 2400, 1200, 600, 1800][idx];
-          const spent = isActive
-            ? [1080, 2160, 1500, 810, 2700, 1350, 1890, 1080, 3240, 1620, 765, 2160][idx]
-            : duration;
-          const remaining = Math.max(0, duration - spent);
-
-          // Randomly assign chart fields
-          const prog = programs[idx % programs.length];
-          const curr = curriculums[idx % curriculums.length];
-          const pkg = packages[idx % packages.length];
-
-          data.push({
-            timesheet_id: `TS-${tid}`, clientprog_id: `CP-${cpid}`,
-            student_name: s.name, student_grade: s.grade, student_school: s.school,
-            sales_pic_name: s.sales, student_uuid: s.uuid,
-            program_name: prog, curriculum: curr, package_name: pkg,
-            duration, time_spent: spent, remaining_time: remaining,
-            is_active: isActive ? 1 : 0,
-            is_reminder: (isActive && remaining > 0 && remaining <= duration * 0.2) ? 1 : 0,
-            latest_update: d(5 + (idx % 20)),
-          });
-          tid++; cpid++;
+        return students.map((s, i) => {
+          const dur = durations[i];
+          const sp = i < 12 ? spent[i] : dur;
+          const rem = Math.max(0, dur - sp);
+          const isActive = i < 12 ? 1 : 0;
+          return {
+            timesheet_id: `TS-${1001 + i}`,
+            clientprog_id: `CP-${2001 + i}`,
+            student_name: s.name,
+            student_grade: s.grade,
+            student_school: s.school,
+            sales_pic_name: s.sales,
+            student_uuid: s.uuid,
+            main_prog: mainProgs[i % mainProgs.length],
+            curriculum: curriculums[i % curriculums.length],
+            package_name: packages[i % packages.length],
+            duration: dur,
+            time_spent: sp,
+            remaining_time: rem,
+            is_active: isActive,
+            is_reminder: (isActive && rem > 0 && rem <= dur * 0.2) ? 1 : 0,
+            latest_update: d(5 + (i % 20)),
+          };
         });
-        return data;
       };
       return { generate };
     })();
@@ -1173,7 +996,7 @@
         if (!url) throw new Error('No data source configured.');
 
         const cached = getCache();
-        if (cached && isFresh(cached.ts)) { return { data: cached.data, fromCache: true }; }
+        if (cached && isFresh(cached.ts)) return { data: cached.data, fromCache: true };
 
         try {
           const controller = new AbortController();
@@ -1188,13 +1011,6 @@
           const data = CONFIG.RESPONSE_TRANSFORM(raw);
           if (!Array.isArray(data) || data.length === 0) throw new Error('Empty or invalid data format.');
 
-          const dateFields = ['session_date', 'latest_update', 'date', 'sessiondate', 'tanggal', 'tgl_session'];
-          if (data.length > 0 && !data[0][CONFIG.FILTER_DATE_FIELD]) {
-            for (const df of dateFields) {
-              if (data[0][df] !== undefined) { CONFIG.FILTER_DATE_FIELD = df; break; }
-            }
-          }
-
           setCache(data);
           return { data, fromCache: false };
         } catch (err) {
@@ -1205,7 +1021,7 @@
       };
 
       const loadCached = () => { const c = getCache(); return c ? c.data : null; };
-      const loadDemo = () => { const data = DemoData.generate(); return data; };
+      const loadDemo = () => DemoData.generate();
       return { fetch, loadCached, loadDemo, getCache };
     })();
 
@@ -1217,22 +1033,22 @@
         const threshold = CONFIG.EXPIRING_THRESHOLD;
         const active = data.filter(r => Number(r.is_active) === 1);
         const inactive = data.filter(r => Number(r.is_active) !== 1);
+
         const activeStudentSet = new Set();
         active.forEach(r => { if (r.student_uuid) activeStudentSet.add(String(r.student_uuid)); });
+
         const expiringSoon = active.filter(r => {
           const dur = Number(r.duration) || 0;
           const rem = Number(r.remaining_time);
           if (dur <= 0 || rem <= 0) return false;
           return rem <= dur * threshold;
         }).length;
-        const alumniSet = new Set();
-        inactive.forEach(r => { if (r.student_uuid) alumniSet.add(String(r.student_uuid)); });
+
         return {
           activePackages: active.length,
           activeStudents: activeStudentSet.size,
           expiringSoon,
           completedPackages: inactive.length,
-          totalAlumni: alumniSet.size,
           totalRecords: data.length,
         };
       };
@@ -1255,31 +1071,32 @@
       const $btnC = document.getElementById('btn-use-cache');
       const $prev = document.getElementById('btn-prev');
       const $next = document.getElementById('btn-next');
-      const $periodSel = document.getElementById('period-select');
-      const $periodCnt = document.getElementById('period-count');
-      const $periodSec = document.getElementById('period-section');
-      const $chipSec = document.getElementById('filter-chip-section');
-      const $chipLabel = document.getElementById('filter-chip-label');
       const $chartsSec = document.getElementById('charts-section');
+      const $filterProg = document.getElementById('filter-program');
+      const $filterCurr = document.getElementById('filter-curriculum');
 
       const KI = {
         pkg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
         student: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>`,
         expiring: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
         done: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
-        alumni: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg>`,
       };
 
       const TI = {
         srtA: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>`,
         srtD: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`,
         srtN: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.3"><polyline points="8 6 12 2 16 6"/><polyline points="8 18 12 22 16 18"/></svg>`,
-        bell: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
       };
 
       const skeletonKPI = () => {
         let h = '';
-        for (let i = 0; i < 5; i++) h += `<div class="rounded-xl p-5" style="background:var(--card);border:1.5px solid var(--border);"><div class="flex items-center gap-3 mb-4"><div class="skeleton w-9 h-9 rounded-lg flex-shrink-0"></div><div class="skeleton h-3 w-24 rounded"></div></div><div class="skeleton h-7 w-28 rounded mb-2"></div><div class="skeleton h-3 w-36 rounded"></div><div class="kpi-bar mt-3"><div class="skeleton h-full w-full rounded"></div></div></div>`;
+        for (let i = 0; i < 4; i++) {
+          h += `<div class="rounded-xl p-5" style="background:var(--card);border:1.5px solid var(--border);">
+            <div class="flex items-center gap-3 mb-4"><div class="skeleton w-9 h-9 rounded-lg flex-shrink-0"></div><div class="skeleton h-3 w-24 rounded"></div></div>
+            <div class="skeleton h-7 w-28 rounded mb-2"></div><div class="skeleton h-3 w-36 rounded"></div>
+            <div class="kpi-bar mt-3"><div class="skeleton h-full w-full rounded"></div></div>
+          </div>`;
+        }
         $kpi.innerHTML = h;
       };
 
@@ -1289,7 +1106,11 @@
         for (let i = 0; i < c; i++) th += `<th><div class="skeleton h-3 w-14 rounded inline-block"></div></th>`;
         $thead.innerHTML = th + '</tr>';
         let tb = '';
-        for (let r = 0; r < 8; r++) { tb += '<tr>'; for (let j = 0; j < c; j++) tb += `<td><div class="skeleton h-4 rounded" style="width:${45 + Math.random() * 55}%"></div></td>`; tb += '</tr>'; }
+        for (let r = 0; r < 8; r++) {
+          tb += '<tr>';
+          for (let j = 0; j < c; j++) tb += `<td><div class="skeleton h-4 rounded" style="width:${45 + Math.random() * 55}%"></div></td>`;
+          tb += '</tr>';
+        }
         $tbody.innerHTML = tb;
       };
 
@@ -1298,25 +1119,23 @@
       const renderKPIs = (m) => {
         const pctThreshold = Math.round(CONFIG.EXPIRING_THRESHOLD * 100);
         const tooltips = {
-          active_packages: 'Number of timesheet records currently marked as active — students with ongoing programs.',
-          active_students: 'Number of unique students who currently have at least one active program package.',
-          expiring_soon: 'Number of active packages where remaining time is ≤ 20% of total duration. These are close to expiring.',
-          completed: 'Number of timesheet records marked as inactive — programs that have been completed or ended.',
-          total_alumni: 'Number of unique inactive students — students who have completed or left their program.',
+          active_packages: 'Number of timesheet records currently marked as active.',
+          active_students: 'Number of unique students with at least one active program package.',
+          expiring_soon: `Active packages where remaining time is \u2264${pctThreshold}% of total duration.`,
+          completed: 'Number of timesheet records marked as inactive.',
         };
 
         const cards = [
           { key: 'active_packages', label: 'Active Packages', val: m.activePackages, sub: `${m.totalRecords} total records`, icon: KI.pkg, iconClass: '', fEnd: v => Math.round(v).toLocaleString('id-ID') },
-          { key: 'active_students', label: 'Active Students', val: m.activeStudents, sub: 'Unique active student count', icon: KI.student, iconClass: '', fEnd: v => Math.round(v).toLocaleString('id-ID') },
-          { key: 'expiring_soon', label: 'Expiring Soon', val: m.expiringSoon, sub: `\u2264${pctThreshold}% time remaining, active only`, icon: KI.expiring, iconClass: 'kpi-warning-icon', fEnd: v => Math.round(v).toLocaleString('id-ID') },
-          { key: 'completed', label: 'Completed', val: m.completedPackages, sub: 'Inactive packages count', icon: KI.done, iconClass: '', fEnd: v => Math.round(v).toLocaleString('id-ID') },
-          { key: 'total_alumni', label: 'Total Alumni', val: m.totalAlumni, sub: 'Unique inactive student count', icon: KI.alumni, iconClass: '', fEnd: v => Math.round(v).toLocaleString('id-ID') },
+          { key: 'active_students', label: 'Active Students', val: m.activeStudents, sub: 'Unique active students', icon: KI.student, iconClass: '', fEnd: v => Math.round(v).toLocaleString('id-ID') },
+          { key: 'expiring_soon', label: 'Expiring Soon', val: m.expiringSoon, sub: `\u2264${pctThreshold}% time remaining`, icon: KI.expiring, iconClass: 'kpi-warning-icon', fEnd: v => Math.round(v).toLocaleString('id-ID') },
+          { key: 'completed', label: 'Completed', val: m.completedPackages, sub: 'Inactive packages', icon: KI.done, iconClass: '', fEnd: v => Math.round(v).toLocaleString('id-ID') },
         ];
+
         $kpi.innerHTML = cards.map((c, i) => {
-          const isActive = State.activeKPIFilter === c.key;
           const tip = tooltips[c.key] || '';
           return `
-          <div class="kpi-card rounded-xl p-5 ${isActive ? 'kpi-active' : ''}" data-kpi-filter="${c.key}" role="button" tabindex="0" aria-pressed="${isActive}" aria-label="Filter by ${c.label}" title="${tip}">
+          <div class="kpi-card rounded-xl p-5" title="${tip}">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${c.iconClass}" style="${!c.iconClass ? 'background:var(--accent-bg);color:var(--accent);' : ''}">${c.icon}</div>
               <span class="text-xs font-medium inline-flex items-center gap-1.5" style="color:var(--text-muted);">
@@ -1329,7 +1148,6 @@
             <div class="font-display font-bold text-2xl tracking-tight" style="color:var(--text);" id="kv-${i}">-</div>
             <span class="text-[0.68rem]" style="color:var(--text-muted);">${c.sub}</span>
             <div class="kpi-bar"><div style="height:100%;width:100%;border-radius:2px;background:var(--accent);opacity:0.15;"></div></div>
-            <span class="kpi-hint">${isActive ? 'Click to clear' : 'Click to filter'}</span>
           </div>`;
         }).join('');
 
@@ -1367,9 +1185,8 @@
           }
           case 'active_status':
             return Number(v) === 1 ? `<span class="badge badge-active">Active</span>` : `<span class="badge badge-inactive">Inactive</span>`;
-          case 'reminder':
-            return Number(v) === 1 ? `<span class="inline-flex items-center gap-1">${TI.bell} <span class="text-[0.68rem] font-medium" style="color:var(--warning);">On</span></span>` : `<span style="color:var(--text-muted);font-size:0.72rem;">Off</span>`;
-          case 'latest_update': return Utils.formatDate(v);
+          case 'latest_update':
+            return Utils.formatDate(v);
           default:
             return v != null && v !== '' ? String(v) : `<span style="color:var(--text-muted);">-</span>`;
         }
@@ -1378,7 +1195,9 @@
       const renderBody = (rows, cols) => {
         if (!rows.length) { $tbody.innerHTML = ''; $empty.classList.remove('hidden'); return; }
         $empty.classList.add('hidden');
-        $tbody.innerHTML = rows.map(r => '<tr>' + cols.map(c => `<td class="${c.sticky ? 'sticky-col' : ''}">${renderCell(r, c)}</td>`).join('') + '</tr>').join('');
+        $tbody.innerHTML = rows.map(r =>
+          '<tr>' + cols.map(c => `<td class="${c.sticky ? 'sticky-col' : ''}">${renderCell(r, c)}</td>`).join('') + '</tr>'
+        ).join('');
       };
 
       const renderInfo = () => {
@@ -1407,54 +1226,29 @@
 
       const pb = (n) => `<button class="w-8 h-8 rounded-lg text-xs font-medium transition-colors" style="${n === State.currentPage ? 'background:var(--accent);color:#fff;font-weight:700;' : 'color:var(--text-sec);'}" data-page="${n}" aria-label="Page ${n}">${n}</button>`;
 
-      const renderPeriodSelect = () => {
-        if (State.periodMode === 'all') {
-          $periodSel.style.display = 'none';
-          $periodCnt.textContent = `${State.filteredData.length} records`;
-          return;
-        }
-        $periodSel.style.display = '';
-        const hasDateField = State.rawData.length > 0 && State.rawData[0][CONFIG.FILTER_DATE_FIELD] !== undefined;
-        if (!hasDateField) {
-          $periodSel.innerHTML = '<option value="">Date field not found</option>';
-          $periodCnt.textContent = `${State.filteredData.length} records`;
-          return;
-        }
-        const periods = PeriodHelper.extractAll(State.rawData, CONFIG.FILTER_DATE_FIELD, State.periodMode);
-        const current = PeriodHelper.currentPeriod(State.periodMode);
-        const allPeriods = new Set(periods);
-        if (current) allPeriods.add(current);
-        const sorted = [...allPeriods].sort().reverse();
-        $periodSel.innerHTML = sorted.map(p => `<option value="${p}">${PeriodHelper.label(p, State.periodMode)}</option>`).join('');
-        $periodSel.value = State.periodValue || current || sorted[0] || '';
-        $periodCnt.textContent = `${State.filteredData.length} records`;
-      };
+      const populateFilterDropdowns = (data) => {
+        // Program dropdown from main_prog
+        const progSet = new Set();
+        data.forEach(r => { if (r.main_prog) progSet.add(r.main_prog); });
+        const progVals = [...progSet].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+        $filterProg.innerHTML = '<option value="">All Program</option>' + progVals.map(v => `<option value="${v}">${v}</option>`).join('');
+        $filterProg.value = State.programFilter;
 
-      const renderPeriodTabs = () => {
-        document.querySelectorAll('.period-tab').forEach(tab => {
-          const isActive = tab.getAttribute('data-period') === State.periodMode;
-          tab.classList.toggle('active', isActive);
-          tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        });
-      };
-
-      const renderFilterChip = () => {
-        if (!State.activeKPIFilter) {
-          $chipSec.classList.add('hidden');
-          return;
-        }
-        $chipSec.classList.remove('hidden');
-        $chipLabel.textContent = CONFIG.KPI_FILTER_LABELS[State.activeKPIFilter] || State.activeKPIFilter;
+        // Curriculum dropdown
+        const currSet = new Set();
+        data.forEach(r => { if (r.curriculum) currSet.add(r.curriculum); });
+        const currVals = [...currSet].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+        $filterCurr.innerHTML = '<option value="">All Curriculum</option>' + currVals.map(v => `<option value="${v}">${v}</option>`).join('');
+        $filterCurr.value = State.curriculumFilter;
       };
 
       const showError = (msg, hasCache) => {
-        $errSec.classList.remove('hidden'); $errMsg.textContent = msg;
+        $errSec.classList.remove('hidden');
+        $errMsg.textContent = msg;
         $btnC.classList.toggle('hidden', !hasCache);
-        $chipSec.classList.add('hidden');
         document.getElementById('controls-section').classList.add('hidden');
         document.getElementById('table-section').classList.add('hidden');
         document.getElementById('pagination-section').classList.add('hidden');
-        $periodSec.classList.add('hidden');
         $chartsSec.classList.add('hidden');
       };
 
@@ -1463,7 +1257,6 @@
         document.getElementById('controls-section').classList.remove('hidden');
         document.getElementById('table-section').classList.remove('hidden');
         document.getElementById('pagination-section').classList.remove('hidden');
-        $periodSec.classList.remove('hidden');
         $chartsSec.classList.remove('hidden');
       };
 
@@ -1479,25 +1272,22 @@
         if (icon) icon.classList.toggle('spin', loading);
       };
 
-      const render = () => {
+      const renderTable = () => {
         const { filteredData, columns, currentPage, pageSize } = State;
-        renderKPIs(MetricEngine.calculate(filteredData));
         renderHead(columns);
         renderBody(filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize), columns);
         renderInfo();
         renderPag();
-        renderPeriodTabs();
-        renderPeriodSelect();
-        renderFilterChip();
-
-        // Update charts if data exists
-        if (filteredData.length > 0) {
-          ChartManager.hideSkeletons();
-          ChartManager.update(filteredData);
-        }
       };
 
-      return { skeletonKPI, skeletonTable, clearKPI, render, showError, hideError, setLastUpdated, setLoading };
+      const render = () => {
+        renderKPIs(MetricEngine.calculate(State.rawData));
+        ChartManager.hideSkeletons();
+        ChartManager.update(State.rawData);
+        renderTable(); // panggil renderTable, bukan duplikat
+      };
+
+      return { skeletonKPI, skeletonTable, clearKPI, render, renderTable, showError, hideError, setLastUpdated, setLoading, populateFilterDropdowns };
     })();
 
     /* ══════════════════════════════════════════════════════════════
@@ -1508,62 +1298,43 @@
       const detectColumns = (data) => {
         if (!data.length) return [...CONFIG.COLUMNS];
         const keys = new Set(Object.keys(data[0]));
-        const matched = CONFIG.COLUMNS.filter(c => keys.has(c.key));
-        return matched;
-      };
-
-      const resolvePeriodValue = () => {
-        if (State.periodMode === 'all') { State.periodValue = null; return; }
-        if (State.periodValue != null) return;
-        State.periodValue = PeriodHelper.currentPeriod(State.periodMode);
-      };
-
-      const applyKPIFilter = (data) => {
-        const f = State.activeKPIFilter;
-        if (!f) return data;
-
-        switch (f) {
-          case 'active_packages':
-          case 'active_students':
-            return data.filter(r => Number(r.is_active) === 1);
-
-          case 'expiring_soon':
-            return data.filter(r => {
-              if (Number(r.is_active) !== 1) return false;
-              const dur = Number(r.duration) || 0;
-              const rem = Number(r.remaining_time);
-              if (dur <= 0 || rem <= 0) return false;
-              return rem <= dur * CONFIG.EXPIRING_THRESHOLD;
-            });
-
-          case 'completed':
-          case 'total_alumni':
-            return data.filter(r => Number(r.is_active) !== 1);
-
-          default:
-            return data;
-        }
+        return CONFIG.COLUMNS.filter(c => keys.has(c.key));
       };
 
       const applyFilters = () => {
-        resolvePeriodValue();
-        const { periodMode, periodValue, searchQuery } = State;
-        const field = CONFIG.FILTER_DATE_FIELD;
-
         let result = State.rawData;
 
-        // 1. Period filter
-        if (periodMode !== 'all' && periodValue) {
-          result = result.filter(r => PeriodHelper.matches(r, field, periodMode, periodValue));
+        // 1. Status filter
+        if (State.statusFilter === 'active') {
+          result = result.filter(r => Number(r.is_active) === 1);
+        } else if (State.statusFilter === 'inactive') {
+          result = result.filter(r => Number(r.is_active) !== 1);
+        } else if (State.statusFilter === 'expiring') {
+          result = result.filter(r => {
+            if (Number(r.is_active) !== 1) return false;
+            const dur = Number(r.duration) || 0;
+            const rem = Number(r.remaining_time);
+            if (dur <= 0 || rem <= 0) return false;
+            return rem <= dur * CONFIG.EXPIRING_THRESHOLD;
+          });
         }
 
-        // 2. KPI card filter
-        result = applyKPIFilter(result);
+        // 2. Program filter
+        if (State.programFilter) {
+          const q = State.programFilter.toLowerCase();
+          result = result.filter(r => String(r.main_prog || '').toLowerCase() === q);
+        }
 
-        // 3. Search filter
-        const q = searchQuery.toLowerCase().trim();
-        if (q) {
-          result = result.filter(r => CONFIG.SEARCHABLE_FIELDS.some(f => String(r[f] || '').toLowerCase().includes(q)));
+        // 3. Curriculum filter
+        if (State.curriculumFilter) {
+          const q = State.curriculumFilter.toLowerCase();
+          result = result.filter(r => String(r.curriculum || '').toLowerCase() === q);
+        }
+
+        // 4. Search filter
+        const sq = State.searchQuery.toLowerCase().trim();
+        if (sq) {
+          result = result.filter(r => CONFIG.SEARCHABLE_FIELDS.some(f => String(r[f] || '').toLowerCase().includes(sq)));
         }
 
         State.filteredData = result;
@@ -1587,17 +1358,17 @@
         });
       };
 
-      const toggleKPIFilter = (filterKey) => {
-        State.activeKPIFilter = State.activeKPIFilter === filterKey ? null : filterKey;
+      const clearAllFilters = () => {
+        State.searchQuery = '';
+        State.statusFilter = '';
+        State.programFilter = '';
+        State.curriculumFilter = '';
+        document.getElementById('search-input').value = '';
+        document.getElementById('filter-status').value = '';
+        document.getElementById('filter-program').value = '';
+        document.getElementById('filter-curriculum').value = '';
         applyFilters();
-        Renderer.render();
-      };
-
-      const clearKPIFilter = () => {
-        if (!State.activeKPIFilter) return;
-        State.activeKPIFilter = null;
-        applyFilters();
-        Renderer.render();
+        Renderer.renderTable();
       };
 
       const loadData = async (showLoading = true) => {
@@ -1612,13 +1383,19 @@
           const result = await DataService.fetch();
           State.rawData = result.data;
           State.columns = detectColumns(result.data);
-          State.sortKey = null; State.sortDir = 'asc';
-          State.searchQuery = ''; State.currentPage = 1;
+          State.sortKey = null;
+          State.sortDir = 'asc';
+          State.searchQuery = '';
+          State.statusFilter = '';
+          State.programFilter = '';
+          State.curriculumFilter = '';
+          State.currentPage = 1;
           State.pageSize = CONFIG.DEFAULT_PAGE_SIZE;
-          State.periodMode = 'monthly'; State.periodValue = null;
-          State.activeKPIFilter = null;
           document.getElementById('search-input').value = '';
+          document.getElementById('filter-status').value = '';
           document.getElementById('page-size').value = String(CONFIG.DEFAULT_PAGE_SIZE);
+
+          Renderer.populateFilterDropdowns(result.data);
           applyFilters();
           State.isLoading = false;
           Renderer.hideError();
@@ -1637,17 +1414,23 @@
       };
 
       const loadDemoData = () => {
-        const data = DataService.loadDemo();
-        State.rawData = data;
-        State.columns = detectColumns(data);
-        State.sortKey = null; State.sortDir = 'asc';
-        State.searchQuery = ''; State.currentPage = 1;
-        State.periodMode = 'monthly'; State.periodValue = null;
-        State.activeKPIFilter = null;
+        State.rawData = DataService.loadDemo();
+        State.columns = detectColumns(State.rawData);
+        State.sortKey = null;
+        State.sortDir = 'asc';
+        State.searchQuery = '';
+        State.statusFilter = '';
+        State.programFilter = '';
+        State.curriculumFilter = '';
+        State.currentPage = 1;
         document.getElementById('search-input').value = '';
+        document.getElementById('filter-status').value = '';
+        document.getElementById('filter-program').value = '';
+        document.getElementById('filter-curriculum').value = '';
+        Renderer.populateFilterDropdowns(State.rawData);
         applyFilters();
         Renderer.hideError();
-        Renderer.render();
+        Renderer.renderTable();
         Renderer.setLastUpdated(Date.now());
         Utils.toast('Demo data loaded', 'info');
       };
@@ -1655,12 +1438,19 @@
       const loadCachedData = () => {
         const cached = DataService.loadCached();
         if (cached) {
-          State.rawData = cached; State.columns = detectColumns(cached);
-          State.searchQuery = ''; State.currentPage = 1;
-          State.periodMode = 'monthly'; State.periodValue = null;
-          State.activeKPIFilter = null;
+          State.rawData = cached;
+          State.columns = detectColumns(cached);
+          State.searchQuery = '';
+          State.statusFilter = '';
+          State.programFilter = '';
+          State.curriculumFilter = '';
+          State.currentPage = 1;
           document.getElementById('search-input').value = '';
-          applyFilters(); Renderer.hideError(); Renderer.render();
+          document.getElementById('filter-status').value = '';
+          Renderer.populateFilterDropdowns(cached);
+          applyFilters();
+          Renderer.hideError();
+          Renderer.render();
           Utils.toast('Loaded from cache', 'info');
         }
       };
@@ -1670,11 +1460,16 @@
         if (!data.length) { Utils.toast('No data to export', 'error'); return; }
         const cols = State.columns;
         const hdr = cols.map(c => `"${c.label}"`).join(',');
-        const rows = data.map(r => cols.map(c => { let v = r[c.key]; if (v == null) v = ''; return `"${String(v).replace(/"/g, '""')}"`; }).join(','));
+        const rows = data.map(r => cols.map(c => {
+          let v = r[c.key]; if (v == null) v = '';
+          return `"${String(v).replace(/"/g, '""')}"`;
+        }).join(','));
         const blob = new Blob(['\uFEFF' + [hdr, ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = `student_tracker_${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+        a.href = url;
+        a.download = `student_tracker_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
         URL.revokeObjectURL(url);
         Utils.toast(`${data.length} records exported`, 'success');
       };
@@ -1687,73 +1482,85 @@
       };
 
       const initTheme = () => {
-        try { const s = localStorage.getItem('tutoring_theme'); if (s) { document.documentElement.setAttribute('data-theme', s); return; } } catch (_) { }
-        if (window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.setAttribute('data-theme', 'light');
+        try {
+          const s = localStorage.getItem('tutoring_theme');
+          if (s) { document.documentElement.setAttribute('data-theme', s); return; }
+        } catch (_) { }
+        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
       };
 
       const bindEvents = () => {
-        document.getElementById('kpi-section').addEventListener('click', (e) => {
-          const card = e.target.closest('[data-kpi-filter]');
-          if (!card) return;
-          const key = card.getAttribute('data-kpi-filter');
-          toggleKPIFilter(key);
-        });
-
-        document.getElementById('kpi-section').addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            const card = e.target.closest('[data-kpi-filter]');
-            if (!card) return;
-            e.preventDefault();
-            const key = card.getAttribute('data-kpi-filter');
-            toggleKPIFilter(key);
-          }
-        });
-
-        document.getElementById('filter-chip-clear').addEventListener('click', clearKPIFilter);
-
+        // Search
         document.getElementById('search-input').addEventListener('input', Utils.debounce(e => {
-          State.searchQuery = e.target.value; applyFilters(); Renderer.render();
+          State.searchQuery = e.target.value;
+          applyFilters();
+          Renderer.renderTable();
         }, 250));
 
-        document.getElementById('btn-clear-search').addEventListener('click', () => {
-          State.searchQuery = ''; document.getElementById('search-input').value = ''; applyFilters(); Renderer.render();
+        // Status filter
+        document.getElementById('filter-status').addEventListener('change', e => {
+          State.statusFilter = e.target.value;
+          applyFilters();
+          Renderer.renderTable();
         });
 
+        // Program filter
+        document.getElementById('filter-program').addEventListener('change', e => {
+          State.programFilter = e.target.value;
+          applyFilters();
+          Renderer.renderTable();
+        });
+
+        // Curriculum filter
+        document.getElementById('filter-curriculum').addEventListener('change', e => {
+          State.curriculumFilter = e.target.value;
+          applyFilters();
+          Renderer.renderTable();
+        });
+
+        // Clear all filters button in empty state
+        document.getElementById('btn-clear-search').addEventListener('click', clearAllFilters);
+
+        // Page size
         document.getElementById('page-size').addEventListener('change', e => {
-          State.pageSize = parseInt(e.target.value, 10) || 10; State.currentPage = 1; Renderer.render();
+          State.pageSize = parseInt(e.target.value, 10) || 10;
+          State.currentPage = 1;
+          Renderer.renderTable();
         });
 
+        // Column sort
         document.getElementById('table-head').addEventListener('click', e => {
-          const th = e.target.closest('th[data-sort]'); if (!th) return;
+          const th = e.target.closest('th[data-sort]');
+          if (!th) return;
           const key = th.getAttribute('data-sort');
           if (State.sortKey === key) State.sortDir = State.sortDir === 'asc' ? 'desc' : 'asc';
           else { State.sortKey = key; State.sortDir = 'asc'; }
-          applySortToFiltered(); State.currentPage = 1; Renderer.render();
+          applySortToFiltered();
+          State.currentPage = 1;
+          Renderer.renderTable();
         });
 
+        // Pagination
         document.getElementById('page-numbers').addEventListener('click', e => {
-          const btn = e.target.closest('[data-page]'); if (!btn) return;
-          State.currentPage = parseInt(btn.getAttribute('data-page'), 10); Renderer.render();
+          const btn = e.target.closest('[data-page]');
+          if (!btn) return;
+          State.currentPage = parseInt(btn.getAttribute('data-page'), 10);
+          Renderer.renderTable();
           document.getElementById('table-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
 
-        document.getElementById('btn-prev').addEventListener('click', () => { if (State.currentPage > 1) { State.currentPage--; Renderer.render(); } });
-        document.getElementById('btn-next').addEventListener('click', () => { const lp = Math.ceil(State.filteredData.length / State.pageSize); if (State.currentPage < lp) { State.currentPage++; Renderer.render(); } });
-
-        document.querySelectorAll('.period-tab').forEach(tab => {
-          tab.addEventListener('click', () => {
-            const mode = tab.getAttribute('data-period');
-            if (mode === State.periodMode) return;
-            State.periodMode = mode; State.periodValue = null;
-            applyFilters(); Renderer.render();
-          });
+        document.getElementById('btn-prev').addEventListener('click', () => {
+          if (State.currentPage > 1) { State.currentPage--; Renderer.renderTable(); }
         });
 
-        document.getElementById('period-select').addEventListener('change', e => {
-          State.periodValue = e.target.value || null;
-          applyFilters(); Renderer.render();
+        document.getElementById('btn-next').addEventListener('click', () => {
+          const lp = Math.ceil(State.filteredData.length / State.pageSize);
+          if (State.currentPage < lp) { State.currentPage++; Renderer.renderTable(); }
         });
 
+        // Header buttons
         document.getElementById('btn-refresh').addEventListener('click', () => {
           try { localStorage.removeItem(CONFIG.CACHE_KEY); } catch (_) { }
           loadData(true);
@@ -1765,12 +1572,15 @@
         document.getElementById('btn-use-cache').addEventListener('click', loadCachedData);
         document.getElementById('btn-use-demo').addEventListener('click', loadDemoData);
 
+        // Keyboard shortcuts
         document.addEventListener('keydown', e => {
           if (e.key === 'Escape') {
-            if (State.activeKPIFilter) { clearKPIFilter(); return; }
             if (document.activeElement?.id === 'search-input') {
-              State.searchQuery = ''; document.getElementById('search-input').value = '';
-              applyFilters(); Renderer.render(); document.getElementById('search-input').blur();
+              State.searchQuery = '';
+              document.getElementById('search-input').value = '';
+              applyFilters();
+              Renderer.renderTable();
+              document.getElementById('search-input').blur();
             }
           }
         });
@@ -1781,6 +1591,7 @@
         bindEvents();
         loadData(true);
       };
+
       return { init };
     })();
 
