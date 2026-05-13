@@ -460,7 +460,10 @@
         <line x1="12" y1="8" x2="12.01" y2="8" />
       </svg>
       <span>All data visualized on this page is sourced from the <strong>CRM Database</strong> via Google Sheets
-        integration. Data refreshes periodically and may have a slight delay from live CRM updates.</span>
+        integration. Data refreshes periodically and may have a slight delay from live CRM updates. <a
+          href="https://docs.google.com/spreadsheets/d/1BCbh-J7Rwxv3bbVtUnMATnxvqwDR8tF5TEb2zaW8hWw/edit?usp=sharing"
+          target="_blank" rel="noopener" style="text-decoration:underline;font-weight:600;">View Source
+          Spreadsheet</a></span>
     </div>
   </div>
 
@@ -476,9 +479,10 @@
             <path d="M7 16l4-8 4 4 5-9" />
           </svg>
         </div>
-        <h1 class="font-display font-bold text-base tracking-tight md:block hidden" style="color:var(--text);">Tutoring Dashboard</h1>
+        <h1 class="font-display font-bold text-base tracking-tight md:block hidden" style="color:var(--text);">Tutoring
+          Dashboard</h1>
       </div>
-        <nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto">
+      <nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto">
         <a href="index.html" class="text-[0.7rem] font-semibold px-3 py-1.5 rounded-lg transition-colors"
           style="background:var(--accent);color:#fff;">Package</a>
         <a href="student.html" class="text-[0.7rem] font-semibold px-3 py-1.5 rounded-lg transition-colors"
@@ -489,6 +493,10 @@
           style="color:var(--text-sec);"
           onmouseover="this.style.background='var(--accent-bg)';this.style.color='var(--accent)'"
           onmouseout="this.style.background='transparent';this.style.color='var(--text-sec)'">Tutor</a>
+        <!-- <a href="quality.html" class="text-[0.7rem] font-semibold px-3 py-1.5 rounded-lg transition-colors"
+          style="color:var(--text-sec);"
+          onmouseover="this.style.background='var(--accent-bg)';this.style.color='var(--accent)'"
+          onmouseout="this.style.background='transparent';this.style.color='var(--text-sec)'">Quality</a> -->
       </nav>
       <div class="md:flex items-center gap-1.5 hidden">
         <span id="last-updated" class="hidden sm:inline text-xs mr-2" style="color:var(--text-muted);"></span>
@@ -656,6 +664,12 @@
           <option value="tier_upgrade">Tier Upgrade</option>
           <option value="trial_conversion">Trial Conversion</option>
           <option value="ongoing_trial">Ongoing Trial</option>
+
+          <!-- Opsi Baru -->
+          <option value="all_success">All Success Program</option>
+          <option value="all_non_trial">All Non Trial Program</option>
+          <option value="all_prev_ended">All Prev Ended Program</option>
+          <option value="all_prev_trial">All Prev Trial Program</option>
         </select>
         <select id="filter-mentee" aria-label="Filter by Mentee Status"
           class="filter-select px-3 py-[7px] rounded-lg text-xs border outline-none cursor-pointer transition-colors">
@@ -751,7 +765,9 @@
         { key: 'category', label: 'Category', type: 'text', sticky: false },
         { key: 'grade_now', label: 'Grade', type: 'text', sticky: false },
         { key: 'sch_name', label: 'School', type: 'text', sticky: false },
-        { key: 'previous_program', label: 'Previous Program', type: 'text', sticky: false },
+        { key: 'previous_program', label: 'Prev Program', type: 'text', sticky: false },
+        { key: 'previous_program_date', label: 'Prev Program Success Date', type: 'date', sticky: false },
+        { key: 'previous_program_end_date', label: 'Prev Program End Date', type: 'date', sticky: false },
         { key: 'program_name', label: 'Program', type: 'text', sticky: false },
         { key: 'package_name', label: 'Package', type: 'text', sticky: false },
         { key: 'success_date', label: 'Success Date', type: 'date', sticky: false },
@@ -1243,8 +1259,15 @@
         const prevTrialData = data.filter(r => isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD]));
         const totalPrevTrial = Math.max(prevTrialData.length, 1);
 
+        const prevEndedPrograms = nonTrialData.filter(r => {
+          return r.previous_program_end_date &&
+            !isNaN(new Date(r.previous_program_end_date).getTime());
+        });
+
+        const totalPrevEnded = Math.max(prevEndedPrograms.length, 1);
+
         const renewals = nonTrialData.filter(r => Number(r.is_renew) === 1).length;
-        const renewalRate = (renewals / totalNonTrial) * 100;
+        const renewalRate = (renewals / totalPrevEnded) * 100;
 
         const newRecs = nonTrialData.filter(r => Number(r.is_new) === 1).length;
         const newRate = (newRecs / totalNonTrial) * 100;
@@ -1267,14 +1290,21 @@
           return end >= today;
         }).length;
 
-        const totalRevenue = data.reduce((s, r) => s + (Number(r.revenue_deal) || 0), 0);
+        const totalRevenue = data.reduce((s, r) => {
+          // Kalau mode All Time, langsung jumlahkan semua
+          if (State.periodMode === 'all') return s + (Number(r.revenue_deal) || 0);
+
+          // Kalau bukan All Time, cek apakah success_date masuk di periode aktif
+          const isInPeriod = PeriodHelper.matches(r, 'success_date', State.periodMode, State.periodValue);
+          return isInPeriod ? s + (Number(r.revenue_deal) || 0) : s;
+        }, 0);
 
         return {
           renewalRate, newRate, upgradeRate, convRate, crossRate,
           ongoingTrial, totalRevenue,
           renewalCount: renewals, newCount: newRecs,
           upgradeCount: upgrades, crossCount: crossSells,
-          convCount: converted, totalNonTrial, totalPrevTrial
+          convCount: converted, totalNonTrial, totalPrevTrial, totalPrevEnded,
         };
       };
       return { calculate };
@@ -1333,7 +1363,7 @@
       const renderKPIs = (m) => {
         const cards = [
           { key: 'new', label: 'New Rate', val: m.newRate, sub: `${m.newCount} of ${m.totalNonTrial} (excl. trial)`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalNonTrial} (excl. trial)`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalPrevEnded} (excl. trial)`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalNonTrial} (excl. trial)`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'upgrade', label: 'Tier Upgrade', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalNonTrial} (excl. trial)`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} (prev. trial)`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
@@ -1389,7 +1419,7 @@
             if (n === 2) return `<span class="badge badge-done">Done</span>`;
             if (n === 1) return `<span class="badge badge-running">Running</span>`;
             if (n === 0) return `<span class="badge badge-inactive">Not Yet</span>`;
-            return `<span class="badge badge-unknown">Unknown</span>`;
+            return `<span class="badge badge-unknown">${n}</span>`;
           }
           case 'date': return Utils.formatDate(v);
           default: return v != null && v !== '' ? String(v) : `<span style="color:var(--text-muted);">-</span>`;
@@ -1439,7 +1469,10 @@
         if (!periods.length) { $periodSel.innerHTML = '<option value="">No data</option>'; $periodCnt.textContent = '0 records'; return; }
         $periodSel.innerHTML = periods.map(p => `<option value="${p}">${PeriodHelper.label(p, State.periodMode)}</option>`).join('');
         $periodSel.value = State.periodValue || periods[0];
-        const count = State.rawData.filter(r => PeriodHelper.matches(r, CONFIG.FILTER_DATE_FIELD, State.periodMode, State.periodValue)).length;
+        const count = State.rawData.filter(r =>
+          PeriodHelper.matches(r, 'success_date', State.periodMode, State.periodValue) ||
+          PeriodHelper.matches(r, 'previous_program_end_date', State.periodMode, State.periodValue)
+        ).length;
         $periodCnt.textContent = `${count} records`;
       };
 
@@ -1513,7 +1546,10 @@
         // Gunakan timeFilteredData untuk Chart
         if (timeFilteredData.length > 0) {
           ChartManager.hideSkeletons();
-          ChartManager.render(timeFilteredData);
+          const data = State.rawData.filter(r =>
+            PeriodHelper.matches(r, 'success_date', State.periodMode, State.periodValue)
+          );
+          ChartManager.render(data);
         }
       };
 
@@ -1544,7 +1580,11 @@
 
         // 1. Time Period
         if (periodMode !== 'all' && periodValue) {
-          result = result.filter(r => PeriodHelper.matches(r, field, periodMode, periodValue));
+          // result = result.filter(r => PeriodHelper.matches(r, field, periodMode, periodValue));
+          result = result.filter(r =>
+            PeriodHelper.matches(r, field, periodMode, periodValue) ||
+            PeriodHelper.matches(r, 'previous_program_end_date', State.periodMode, periodValue)
+          );
         }
 
         // Cek apakah datanya benar-benar berubah dari sebelumnya
@@ -1584,6 +1624,25 @@
               if (isNaN(end.getTime())) return false;
               return end >= today;
             });
+          } else if (categoryFilter === 'all_success') {
+            if (periodMode === 'all') {
+              result = result; // Tampilkan semua kalau All Time
+            } else {
+              result = result.filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
+            }
+          }
+          else if (categoryFilter === 'all_non_trial') {
+            result = result.filter(r => !isDepositTrial(r[CONFIG.PACKAGE_FIELD]));
+          }
+          else if (categoryFilter === 'all_prev_ended') {
+            result = result.filter(r => {
+              return !isDepositTrial(r[CONFIG.PACKAGE_FIELD]) &&
+                r.previous_program_end_date &&
+                !isNaN(new Date(r.previous_program_end_date).getTime());
+            });
+          }
+          else if (categoryFilter === 'all_prev_trial') {
+            result = result.filter(r => isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD]));
           }
         }
 
