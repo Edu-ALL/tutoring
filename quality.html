@@ -63,7 +63,6 @@
             --score-4-text: #2DD4BF;
             --score-5-bg: rgba(52, 211, 153, 0.1);
             --score-5-text: #34D399;
-            /* Grade colors */
             --grade-c-bg: rgba(248, 113, 113, 0.12);
             --grade-c-text: #F87171;
             --grade-c-border: rgba(248, 113, 113, 0.25);
@@ -109,7 +108,6 @@
             --score-4-text: #14B8A6;
             --score-5-bg: rgba(5, 150, 105, 0.1);
             --score-5-text: #059669;
-            /* Grade colors */
             --grade-c-bg: rgba(220, 38, 38, 0.08);
             --grade-c-text: #DC2626;
             --grade-c-border: rgba(220, 38, 38, 0.2);
@@ -175,6 +173,83 @@
             }
         }
 
+        /* Skeleton bar variants */
+        .skel-bar {
+            display: inline-block;
+            height: 12px;
+            border-radius: 4px;
+            background: var(--skel-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skel-bar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, var(--skel-shine) 50%, transparent 100%);
+            transform: translateX(-100%);
+            animation: shimmer 1.6s ease-in-out infinite;
+        }
+
+        .skel-circle {
+            display: inline-block;
+            border-radius: 8px;
+            background: var(--skel-base);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .skel-circle::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, var(--skel-shine) 50%, transparent 100%);
+            transform: translateX(-100%);
+            animation: shimmer 1.6s ease-in-out infinite;
+        }
+
+        .skel-pill {
+            display: inline-block;
+            height: 20px;
+            border-radius: 999px;
+            background: var(--skel-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skel-pill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, var(--skel-shine) 50%, transparent 100%);
+            transform: translateX(-100%);
+            animation: shimmer 1.6s ease-in-out infinite;
+        }
+
+        /* Stagger delay for skeleton rows */
+        .skel-row:nth-child(1) .skel-bar, .skel-row:nth-child(1) .skel-circle, .skel-row:nth-child(1) .skel-pill { animation-delay: 0s; }
+        .skel-row:nth-child(1) .skel-bar::after, .skel-row:nth-child(1) .skel-circle::after, .skel-row:nth-child(1) .skel-pill::after { animation-delay: 0s; }
+        .skel-row:nth-child(2) .skel-bar, .skel-row:nth-child(2) .skel-circle, .skel-row:nth-child(2) .skel-pill { animation-delay: 0.08s; }
+        .skel-row:nth-child(2) .skel-bar::after, .skel-row:nth-child(2) .skel-circle::after, .skel-row:nth-child(2) .skel-pill::after { animation-delay: 0.08s; }
+        .skel-row:nth-child(3) .skel-bar, .skel-row:nth-child(3) .skel-circle, .skel-row:nth-child(3) .skel-pill { animation-delay: 0.16s; }
+        .skel-row:nth-child(3) .skel-bar::after, .skel-row:nth-child(3) .skel-circle::after, .skel-row:nth-child(3) .skel-pill::after { animation-delay: 0.16s; }
+        .skel-row:nth-child(4) .skel-bar, .skel-row:nth-child(4) .skel-circle, .skel-row:nth-child(4) .skel-pill { animation-delay: 0.24s; }
+        .skel-row:nth-child(4) .skel-bar::after, .skel-row:nth-child(4) .skel-circle::after, .skel-row:nth-child(4) .skel-pill::after { animation-delay: 0.24s; }
+        .skel-row:nth-child(5) .skel-bar, .skel-row:nth-child(5) .skel-circle, .skel-row:nth-child(5) .skel-pill { animation-delay: 0.32s; }
+        .skel-row:nth-child(5) .skel-bar::after, .skel-row:nth-child(5) .skel-circle::after, .skel-row:nth-child(5) .skel-pill::after { animation-delay: 0.32s; }
+        .skel-row:nth-child(6) .skel-bar, .skel-row:nth-child(6) .skel-circle, .skel-row:nth-child(6) .skel-pill { animation-delay: 0.40s; }
+        .skel-row:nth-child(6) .skel-bar::after, .skel-row:nth-child(6) .skel-circle::after, .skel-row:nth-child(6) .skel-pill::after { animation-delay: 0.40s; }
+        .skel-row:nth-child(7) .skel-bar, .skel-row:nth-child(7) .skel-circle, .skel-row:nth-child(7) .skel-pill { animation-delay: 0.48s; }
+        .skel-row:nth-child(7) .skel-bar::after, .skel-row:nth-child(7) .skel-circle::after, .skel-row:nth-child(7) .skel-pill::after { animation-delay: 0.48s; }
+        .skel-row:nth-child(8) .skel-bar, .skel-row:nth-child(8) .skel-circle, .skel-row:nth-child(8) .skel-pill { animation-delay: 0.56s; }
+        .skel-row:nth-child(8) .skel-bar::after, .skel-row:nth-child(8) .skel-circle::after, .skel-row:nth-child(8) .skel-pill::after { animation-delay: 0.56s; }
+        .skel-row:nth-child(9) .skel-bar, .skel-row:nth-child(9) .skel-circle, .skel-row:nth-child(9) .skel-pill { animation-delay: 0.64s; }
+        .skel-row:nth-child(9) .skel-bar::after, .skel-row:nth-child(9) .skel-circle::after, .skel-row:nth-child(9) .skel-pill::after { animation-delay: 0.64s; }
+        .skel-row:nth-child(10) .skel-bar, .skel-row:nth-child(10) .skel-circle, .skel-row:nth-child(10) .skel-pill { animation-delay: 0.72s; }
+        .skel-row:nth-child(10) .skel-bar::after, .skel-row:nth-child(10) .skel-circle::after, .skel-row:nth-child(10) .skel-pill::after { animation-delay: 0.72s; }
+
         /* --- TABLE STYLES --- */
         .data-table {
             border-collapse: separate;
@@ -238,6 +313,10 @@
             background: var(--accent-bg);
         }
 
+        .data-table tbody tr.skel-row:hover {
+            background: transparent;
+        }
+
         .table-wrap::-webkit-scrollbar {
             height: 6px;
         }
@@ -263,41 +342,13 @@
             letter-spacing: 0.02em;
         }
 
-        .badge-1 {
-            background: var(--score-1-bg);
-            color: var(--score-1-text);
-        }
-
-        .badge-2 {
-            background: var(--score-2-bg);
-            color: var(--score-2-text);
-        }
-
-        .badge-3 {
-            background: var(--score-3-bg);
-            color: var(--score-3-text);
-        }
-
-        .badge-4 {
-            background: var(--score-4-bg);
-            color: var(--score-4-text);
-        }
-
-        .badge-5 {
-            background: var(--score-5-bg);
-            color: var(--score-5-text);
-        }
-
-        .badge-muted {
-            background: var(--bg-raised);
-            color: var(--text-muted);
-        }
-
-        .badge-day {
-            background: var(--accent-bg);
-            color: var(--accent);
-            border: 1px solid var(--accent-border);
-        }
+        .badge-1 { background: var(--score-1-bg); color: var(--score-1-text); }
+        .badge-2 { background: var(--score-2-bg); color: var(--score-2-text); }
+        .badge-3 { background: var(--score-3-bg); color: var(--score-3-text); }
+        .badge-4 { background: var(--score-4-bg); color: var(--score-4-text); }
+        .badge-5 { background: var(--score-5-bg); color: var(--score-5-text); }
+        .badge-muted { background: var(--bg-raised); color: var(--text-muted); }
+        .badge-day { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-border); }
 
         .tabular-nums {
             font-variant-numeric: tabular-nums;
@@ -328,7 +379,7 @@
         }
 
         .section-divider {
-            margin: 40px 0;
+            margin: 40px 0 20px 0;
             border-top: 1px dashed var(--border);
             position: relative;
         }
@@ -537,8 +588,7 @@
                 <line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
             <span>All data visualized on this page is sourced from the <strong>Timesheet Database</strong> via Google
-                Sheets
-                integration. Data refreshes periodically and may have a slight delay from live timesheet updates. <a
+                Sheets integration. Data refreshes periodically and may have a slight delay from live timesheet updates. <a
                     href="https://docs.google.com/spreadsheets/d/1BCbh-J7Rwxv3bbVtUnMATnxvqwDR8tF5TEb2zaW8hWw/edit?usp=sharing"
                     target="_blank" rel="noopener" style="text-decoration:underline;font-weight:600;">View Source
                     Spreadsheet</a></span>
@@ -625,8 +675,7 @@
                 </svg>
             </div>
             <p class="font-display font-semibold text-sm mb-1" style="color:var(--text);">Failed to load data</p>
-            <p id="error-msg" class="text-xs mb-5" style="color:var(--text-muted);">Network error or quota limit
-                reached.</p>
+            <p id="error-msg" class="text-xs mb-5" style="color:var(--text-muted);">Network error or quota limit reached.</p>
             <div class="flex items-center justify-center gap-3">
                 <button id="btn-retry" class="px-4 py-2 rounded-lg text-xs font-semibold transition-colors"
                     style="background:var(--accent);color:#fff;">Retry</button>
@@ -640,16 +689,16 @@
         <!-- TABLE 1: TUTOR QC -->
         <!-- ========================================== -->
         <section id="tutor-qc-section">
-            <h2 class="font-display font-semibold text-base mb-4" style="color:var(--text);">Tutor QC</h2>
 
+            <div class="section-divider"><span>Tutor QC</span></div>
             <!-- Controls -->
             <div id="tutor-controls"
-                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-                <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 mt-4">
+                <div class="flex gap-2 items-center flex-wrap">
                     <div class="relative w-full sm:w-72">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="14" height="14" viewBox="0 0 24 24"
-                            fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="14" height="14"
+                            viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8" />
                             <line x1="21" y1="21" x2="16.65" y2="16.65" />
                         </svg>
@@ -659,6 +708,15 @@
                             onfocus="this.style.borderColor='var(--accent-border)'"
                             onblur="this.style.borderColor='var(--border)'">
                     </div>
+                    <!-- TUTOR QUALITY FILTER -->
+                    <select id="tutor-filter-quality" aria-label="Filter by quality grade"
+                        class="filter-select px-3 py-2 rounded-lg text-xs border outline-none cursor-pointer transition-colors"
+                        style="border-color:var(--border);color:var(--text);">
+                        <option value="">All Grades</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                    </select>
                 </div>
                 <div class="flex items-center gap-3">
                     <span id="tutor-table-info" class="text-xs" style="color:var(--text-muted);"></span>
@@ -699,22 +757,20 @@
             </div>
         </section>
 
-        <div class="section-divider"><span>Session Breakdown</span></div>
+        <div class="section-divider"><span>Progress Notes QC</span></div>
 
         <!-- ========================================== -->
         <!-- TABLE 2: PROGRESS NOTES QC -->
         <!-- ========================================== -->
         <section id="notes-qc-section">
-            <h2 class="font-display font-semibold text-base mb-4" style="color:var(--text);">Progress Notes QC</h2>
-
             <!-- Controls -->
             <div id="notes-controls"
                 class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-                <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+                <div class="flex gap-2 items-center flex-wrap">
                     <div class="relative w-full sm:w-72">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="14" height="14" viewBox="0 0 24 24"
-                            fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="14" height="14"
+                            viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8" />
                             <line x1="21" y1="21" x2="16.65" y2="16.65" />
                         </svg>
@@ -725,6 +781,16 @@
                             onfocus="this.style.borderColor='var(--accent-border)'"
                             onblur="this.style.borderColor='var(--border)'">
                     </div>
+                    <!-- NOTES QUALITY FILTER -->
+                    <select id="notes-filter-quality" aria-label="Filter by quality status"
+                        class="filter-select px-3 py-2 rounded-lg text-xs border outline-none cursor-pointer transition-colors"
+                        style="border-color:var(--border);color:var(--text);">
+                        <option value="">All Statuses</option>
+                        <option value="NO GOOD, REDO!!">NO GOOD, REDO!!</option>
+                        <option value="Needs Revision">Needs Revision</option>
+                        <option value="Acceptable">Acceptable</option>
+                        <option value="Submitable">Submitable</option>
+                    </select>
                     <select id="notes-filter-package" aria-label="Filter by package"
                         class="filter-select px-3 py-2 rounded-lg text-xs border outline-none cursor-pointer transition-colors"
                         style="border-color:var(--border);color:var(--text);">
@@ -798,8 +864,7 @@
         <div class="modal-content" role="dialog" aria-modal="true">
             <div class="modal-header">
                 <div>
-                    <h3 id="notes-modal-title" class="font-display font-bold text-base" style="color:var(--text);">
-                        Details</h3>
+                    <h3 id="notes-modal-title" class="font-display font-bold text-base" style="color:var(--text);">Details</h3>
                     <div class="flex items-center gap-2 mt-1"><span id="notes-modal-score-badge"
                             class="badge"></span><span id="notes-modal-date" class="text-xs"
                             style="color:var(--text-sec);"></span></div>
@@ -902,12 +967,11 @@
         ];
 
         // ==========================================
-        // GRADE HELPER
+        // GRADE & QUALITY HELPERS
         // ==========================================
         function getGradeInfo(score, max, isPercentage = false) {
             const s = Number(score);
             const m = Number(max) || 18;
-            // Kalau isPercentage, score sudah 0-100, langsung pakai. Kalau tidak, hitung persentase.
             const pct = isPercentage ? (s / 100) : (m > 0 ? (s / m) : 0);
 
             if (pct < 0.5) {
@@ -917,6 +981,28 @@
             } else {
                 return { grade: 'A', bg: 'var(--grade-a-bg)', text: 'var(--grade-a-text)', border: 'var(--grade-a-border)' };
             }
+        }
+
+        function getQualityBand(score, maxScore) {
+            const s = Number(score);
+            const m = Number(maxScore);
+
+            let band = { label: "-", bg: "var(--bg-raised)", text: "var(--text-muted)", border: "var(--border)" };
+
+            if (m === 12) {
+                if (s <= 5) band = { label: "NO GOOD, REDO!!", bg: "var(--danger-bg)", text: "var(--danger)", border: "var(--grade-c-border)" };
+                else if (s >= 6 && s <= 8) band = { label: "Needs Revision", bg: "var(--warning-bg)", text: "var(--warning)", border: "var(--grade-b-border)" };
+                else if (s >= 9 && s <= 10) band = { label: "Acceptable", bg: "var(--success-bg)", text: "var(--success)", border: "var(--grade-a-border)" };
+                else if (s >= 11) band = { label: "Submitable", bg: "var(--accent-bg)", text: "var(--accent)", border: "var(--accent-border)" };
+            }
+            else if (m === 18) {
+                if (s <= 8) band = { label: "NO GOOD, REDO!!", bg: "var(--danger-bg)", text: "var(--danger)", border: "var(--grade-c-border)" };
+                else if (s >= 9 && s <= 12) band = { label: "Needs Revision", bg: "var(--warning-bg)", text: "var(--warning)", border: "var(--grade-b-border)" };
+                else if (s >= 13 && s <= 15) band = { label: "Acceptable", bg: "var(--success-bg)", text: "var(--success)", border: "var(--grade-a-border)" };
+                else if (s >= 16) band = { label: "Submitable", bg: "var(--accent-bg)", text: "var(--accent)", border: "var(--accent-border)" };
+            }
+
+            return band;
         }
 
         const Utils = {
@@ -1037,6 +1123,43 @@
         const NotesState = createTableState(NOTES_CONFIG);
 
         // ==========================================
+        // SKELETON GENERATOR
+        // ==========================================
+        function generateSkeletonCell(colType) {
+            switch (colType) {
+                case 'tutor_name':
+                    return `<div style="display:flex;align-items:center;gap:10px;">
+                        <div class="skel-circle" style="width:30px;height:30px;"></div>
+                        <div class="skel-bar" style="width:100px;height:12px;"></div>
+                    </div>`;
+                case 'package_badge':
+                    return `<div class="skel-pill" style="width:48px;height:20px;"></div>`;
+                case 'score_grade':
+                    return `<div class="skel-pill" style="width:80px;height:20px;"></div>`;
+                case 'text':
+                    return `<div class="skel-bar" style="width:90px;height:12px;"></div>`;
+                case 'date':
+                    return `<div class="skel-bar" style="width:72px;height:12px;"></div>`;
+                case 'action_btn':
+                    return `<div class="skel-circle" style="width:22px;height:22px;border-radius:4px;"></div>`;
+                default:
+                    return `<div class="skel-bar" style="width:60px;height:12px;"></div>`;
+            }
+        }
+
+        function generateSkeletonRows(columns, rowCount) {
+            let html = '';
+            for (let i = 0; i < rowCount; i++) {
+                html += '<tr class="skel-row">';
+                columns.forEach(col => {
+                    html += `<td>${generateSkeletonCell(col.type)}</td>`;
+                });
+                html += '</tr>';
+            }
+            return html;
+        }
+
+        // ==========================================
         // RENDERERS
         // ==========================================
         function createTableRenderer(state, idPrefix) {
@@ -1075,14 +1198,14 @@
                         if (isNaN(score) || v == null) return `<span style="color:var(--text-muted);">-</span>`;
 
                         if (col.key === 'avg_score') {
-                            // avg_score sudah 0-100, langsung pakai sebagai persentase
                             const g = getGradeInfo(score, 100, true);
                             return `<span class="badge" style="background:${g.bg};color:${g.text};border:1px solid ${g.border};font-weight:700;">${g.grade} - ${score.toFixed(1)}</span>`;
                         } else {
-                            // quality_score perlu dibagi quality_max_score
                             const max = Number(row.quality_max_score) || 18;
                             const g = getGradeInfo(score, max, false);
-                            return `<span class="badge" style="background:${g.bg};color:${g.text};border:1px solid ${g.border};font-weight:700;">${g.grade} - ${score}/${max}</span>`;
+                            const qb = getQualityBand(score, max);
+
+                            return `<span class="badge" style="background:${qb.bg};color:${qb.text};border:1px solid ${qb.border};font-weight:700;">${score}/${max} - ${qb.label}</span>`;
                         }
                     }
                     case 'quality_badge': {
@@ -1117,15 +1240,27 @@
                 ).join('');
             };
 
+            const renderSkeleton = (cols) => {
+                $empty.classList.add('hidden');
+                const rowCount = 8;
+                $tbody.innerHTML = generateSkeletonRows(cols, rowCount);
+            };
+
             const renderInfo = () => {
                 const t = state.filteredData.length;
-                if (!t) { $info.textContent = ''; return; }
+                if (!t || state.isLoading) { $info.textContent = ''; return; }
                 const start = (state.currentPage - 1) * state.pageSize + 1;
                 const end = Math.min(state.currentPage * state.pageSize, t);
                 $info.textContent = `${start}\u2013${end} of ${t}`;
             };
 
             const renderPag = () => {
+                if (state.isLoading) {
+                    $prev.disabled = true;
+                    $next.disabled = true;
+                    $pages.innerHTML = '';
+                    return;
+                }
                 const t = state.filteredData.length;
                 const lp = Math.max(1, Math.ceil(t / state.pageSize));
                 $prev.disabled = state.currentPage <= 1;
@@ -1147,18 +1282,22 @@
 
             const render = () => {
                 renderHead(state.columns);
-                renderBody(
-                    state.filteredData.slice(
-                        (state.currentPage - 1) * state.pageSize,
-                        state.currentPage * state.pageSize
-                    ),
-                    state.columns
-                );
+                if (state.isLoading) {
+                    renderSkeleton(state.columns);
+                } else {
+                    renderBody(
+                        state.filteredData.slice(
+                            (state.currentPage - 1) * state.pageSize,
+                            state.currentPage * state.pageSize
+                        ),
+                        state.columns
+                    );
+                }
                 renderInfo();
                 renderPag();
             };
 
-            return { renderHead, renderBody, renderInfo, renderPag, render };
+            return { renderHead, renderBody, renderSkeleton, renderInfo, renderPag, render };
         }
 
         const TutorRenderer = createTableRenderer(TutorState, 'tutor');
@@ -1193,16 +1332,33 @@
                         config.SEARCHABLE_FIELDS.some(f => String(r[f] || '').toLowerCase().includes(q))
                     );
                 }
-                if (idPrefix === 'notes') {
-                    if (state.filters.quality !== '') {
-                        const val = Number(state.filters.quality);
-                        result = result.filter(r => Number(r.quality_score) === val);
+                
+                // Specific Filters for Tutor
+                if (idPrefix === 'tutor') {
+                    if (state.filters.grade && state.filters.grade !== '') {
+                        const targetGrade = state.filters.grade;
+                        result = result.filter(r => {
+                            const g = getGradeInfo(Number(r.avg_score), 100, true);
+                            return g.grade === targetGrade;
+                        });
                     }
-                    if (state.filters.package !== '') {
+                }
+
+                // Specific Filters for Notes
+                if (idPrefix === 'notes') {
+                    if (state.filters.qualityBand && state.filters.qualityBand !== '') {
+                        const targetBand = state.filters.qualityBand;
+                        result = result.filter(r => {
+                            const qb = getQualityBand(Number(r.quality_score), Number(r.quality_max_score) || 18);
+                            return qb.label === targetBand;
+                        });
+                    }
+                    if (state.filters.package && state.filters.package !== '') {
                         const val = state.filters.package;
                         result = result.filter(r => String(r.package) === val);
                     }
                 }
+
                 state.filteredData = result;
                 applySortToFiltered();
                 state.currentPage = 1;
@@ -1260,14 +1416,35 @@
                         if (state.currentPage < lp) { state.currentPage++; renderer.render(); }
                     });
 
+                // Bind Quality Filter for Tutor
+                if (idPrefix === 'tutor') {
+                    document.getElementById('tutor-filter-quality')
+                        .addEventListener('change', e => { 
+                            state.filters.grade = e.target.value; 
+                            applyFiltersAndRender(); 
+                        });
+                }
+
+                // Bind Quality & Package Filters for Notes
                 if (idPrefix === 'notes') {
+                    document.getElementById('notes-filter-quality')
+                        .addEventListener('change', e => { 
+                            state.filters.qualityBand = e.target.value; 
+                            applyFiltersAndRender(); 
+                        });
                     document.getElementById('notes-filter-package')
-                        .addEventListener('change', e => { state.filters.package = e.target.value; applyFiltersAndRender(); });
+                        .addEventListener('change', e => { 
+                            state.filters.package = e.target.value; 
+                            applyFiltersAndRender(); 
+                        });
                     document.getElementById('notes-btn-clear-search')
                         .addEventListener('click', () => {
-                            state.searchQuery = ''; state.filters.quality = ''; state.filters.package = '';
+                            state.searchQuery = ''; 
+                            state.filters.qualityBand = ''; 
+                            state.filters.package = '';
                             document.getElementById('notes-search-input').value = '';
                             document.getElementById('notes-filter-package').value = '';
+                            document.getElementById('notes-filter-quality').value = '';
                             applyFiltersAndRender();
                         });
                 }
@@ -1293,36 +1470,35 @@
                 const d = new Date(item.start_date);
                 document.getElementById('notes-modal-date').textContent = isNaN(d) ? '-' : Utils.formatDate(d);
 
-                // --- Score badge with grade colors ---
                 const score = Number(item.quality_score);
                 const max = Number(item.quality_max_score) || 18;
                 const g = getGradeInfo(score, max, false);
+                const qb = getQualityBand(score, max);
 
                 const badge = document.getElementById('notes-modal-score-badge');
                 badge.className = 'badge';
-                badge.style.background = g.bg;
-                badge.style.color = g.text;
-                badge.style.border = `1px solid ${g.border}`;
-                badge.textContent = `${g.grade} · ${score} / ${max}`;
+                badge.style.background = qb.bg;
+                badge.style.color = qb.text;
+                badge.style.border = `1px solid ${qb.border}`;
+                badge.textContent = `${qb.label} · ${score} / ${max}`;
 
-                // Parse JSON Strings
                 const reasons = Utils.safeJsonParse(item.quality_reason);
                 const strengthArr = Utils.safeJsonParse(item.strength);
                 const mustFixArr = Utils.safeJsonParse(item.must_fix);
 
-                // Render Quality Reason with grade colors per item
                 let reasonHtml = '';
                 if (reasons.length > 0) {
                     reasons.forEach(r => {
                         const itemScore = Number(r.score) || 0;
                         const itemMax = Number(r.max_score) || 3;
                         const ig = getGradeInfo(itemScore, itemMax);
+                        const iqb = getQualityBand(itemScore, itemMax);
 
                         reasonHtml += `
                     <div class="qc-item">
                         <div class="flex justify-between items-center mb-1">
                             <span class="qc-category">${r.category || 'Category'}</span>
-                            <span class="badge" style="background:${ig.bg};color:${ig.text};border:1px solid ${ig.border};">${ig.grade} · ${itemScore}</span>
+                            <span class="badge" style="background:${iqb.bg};color:${iqb.text};border:1px solid ${iqb.border};">${iqb.label} · ${itemScore}</span>
                         </div>
                         <div class="qc-value">${r.value || '-'}</div>
                     </div>
@@ -1333,7 +1509,6 @@
                 }
                 document.getElementById('notes-modal-reason').innerHTML = reasonHtml;
 
-                // Render Strengths
                 let strengthHtml = '';
                 if (strengthArr.length > 0) {
                     strengthHtml = strengthArr.map(s => `
@@ -1347,7 +1522,6 @@
                 }
                 document.getElementById('notes-modal-strength').innerHTML = strengthHtml;
 
-                // Render Must Fix
                 let mustFixHtml = '';
                 if (mustFixArr.length > 0) {
                     mustFixHtml = mustFixArr.map(s => `
@@ -1393,6 +1567,11 @@
             };
 
             const loadAllData = async () => {
+                TutorState.isLoading = true;
+                NotesState.isLoading = true;
+                TutorRenderer.render();
+                NotesRenderer.render();
+
                 const icon = document.getElementById('refresh-icon');
                 if (icon) icon.classList.add('spin');
                 try {
@@ -1404,14 +1583,20 @@
                     TutorState.rawData = tutorRes.data;
                     TutorState.sortKey = 'avg_score'; TutorState.sortDir = 'desc';
                     TutorState.searchQuery = '';
+                    TutorState.filters = { grade: '' }; // Set filter state
+                    TutorState.isLoading = false;
                     document.getElementById('tutor-search-input').value = '';
+                    document.getElementById('tutor-filter-quality').value = ''; // Reset filter UI
                     document.getElementById('tutor-page-size').value = '10';
                     TutorUI.loadData();
 
                     NotesState.rawData = notesRes.data;
                     NotesState.sortKey = 'start_date'; NotesState.sortDir = 'desc';
-                    NotesState.searchQuery = ''; NotesState.filters = { quality: '', package: '' };
+                    NotesState.searchQuery = ''; 
+                    NotesState.filters = { qualityBand: '', package: '' }; // Set filter state
+                    NotesState.isLoading = false;
                     document.getElementById('notes-search-input').value = '';
+                    document.getElementById('notes-filter-quality').value = ''; // Reset filter UI
                     document.getElementById('notes-filter-package').value = '';
                     document.getElementById('notes-page-size').value = '10';
                     NotesUI.loadData();
@@ -1420,6 +1605,11 @@
                     Utils.toast('Data loaded successfully', 'success');
 
                 } catch (err) {
+                    TutorState.isLoading = false;
+                    NotesState.isLoading = false;
+                    TutorRenderer.render();
+                    NotesRenderer.render();
+
                     Utils.toast(err.message, 'error');
                     const cachedTutor = localStorage.getItem(CONFIG.CACHE_KEY_TUTOR);
                     const cachedNotes = localStorage.getItem(CONFIG.CACHE_KEY_NOTES);
@@ -1459,7 +1649,21 @@
                 if (window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.setAttribute('data-theme', 'light');
             };
 
-            return { init: () => { initTheme(); bindGlobalEvents(); TutorUI.init(); NotesUI.init(); loadAllData(); } };
+            return {
+                init: () => {
+                    initTheme();
+                    bindGlobalEvents();
+                    TutorUI.init();
+                    NotesUI.init();
+                    TutorRenderer.renderHead(TutorState.columns);
+                    TutorRenderer.renderSkeleton(TutorState.columns);
+                    TutorRenderer.renderPag();
+                    NotesRenderer.renderHead(NotesState.columns);
+                    NotesRenderer.renderSkeleton(NotesState.columns);
+                    NotesRenderer.renderPag();
+                    loadAllData();
+                }
+            };
         })();
 
         document.addEventListener('DOMContentLoaded', App.init);
