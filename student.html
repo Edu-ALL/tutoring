@@ -462,9 +462,9 @@
             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
         </div>
-        <h1 class="font-display font-bold text-base tracking-tight" style="color:var(--text);">Tutoring Dashboard</h1>
+        <h1 class="font-display font-bold text-base tracking-tight md:block hidden" style="color:var(--text);">Tutoring Dashboard</h1>
       </div>
-      <nav class="flex items-center gap-1 sm:gap-2">
+      <nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto">
         <a href="index.html" class="text-[0.7rem] font-semibold px-3 py-1.5 rounded-lg transition-colors"
           style="color:var(--text-sec);"
           onmouseover="this.style.background='var(--accent-bg)';this.style.color='var(--accent)'"
@@ -480,7 +480,7 @@
           onmouseover="this.style.background='var(--accent-bg)';this.style.color='var(--accent)'"
           onmouseout="this.style.background='transparent';this.style.color='var(--text-sec)'">Quality</a>
       </nav>
-      <div class="flex items-center gap-1.5">
+      <div class="md:flex items-center gap-1.5 hidden">
         <span id="last-updated" class="hidden sm:inline text-xs mr-2" style="color:var(--text-muted);"></span>
         <button id="btn-refresh" aria-label="Refresh data"
           class="w-8 h-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--accent-bg)]"
@@ -595,8 +595,8 @@
     </section>
 
     <section id="controls-section" class="mt-4 flex flex-col gap-3">
-      <div class="flex items-center gap-2 sm:gap-1 justify-between">
-        <div class="flex gap-1 w-full">
+      <div class="flex md:flex-nowrap flex-wrap gap-2 sm:gap-1 justify-between">
+        <div class="flex md:flex-nowrap flex-wrap gap-1 w-full md:justify-start justify-center">
           <select id="filter-status" aria-label="Filter by status" class="filter-select">
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -621,7 +621,7 @@
               onfocus="this.style.borderColor='var(--accent-border)'" onblur="this.style.borderColor='var(--border)'">
           </div>
         </div>
-        <div class="flex items-center w-full justify-end gap-1">
+        <div class="flex items-center w-full md:justify-end justify-between gap-1">
           <span id="table-info" class="text-xs" style="color:var(--text-muted);"></span>
           <select id="page-size" aria-label="Rows per page" class="filter-select">
             <option value="10">10 rows</option>
