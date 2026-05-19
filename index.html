@@ -649,7 +649,8 @@
 
     <section id="controls-section"
       class="mt-4 flex flex-row md:flex-nowrap flex-wrap items-start sm:items-center justify-between gap-3">
-      <div class="relative flex flex-row md:flex-nowrap flex-wrap w-full gap-1 overflow-x-auto md:justify-start justify-center">
+      <div
+        class="relative flex flex-row md:flex-nowrap flex-wrap w-full gap-1 overflow-x-auto md:justify-start justify-center">
         <select id="filter-program" aria-label="Filter by Program"
           class="filter-select px-3 py-[7px] rounded-lg text-xs border outline-none cursor-pointer transition-colors">
           <option value="all">All Programs</option>
@@ -1362,25 +1363,28 @@
 
       const renderKPIs = (m) => {
         const cards = [
-          { key: 'new', label: 'New Rate', val: m.newRate, sub: `${m.newCount} of ${m.totalNonTrial} (excl. trial)`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalPrevEnded} (excl. trial)`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalNonTrial} (excl. trial)`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'upgrade', label: 'Tier Upgrade', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalNonTrial} (excl. trial)`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} (prev. trial)`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'new', label: 'New Rate', val: m.newRate, sub: `${m.newCount} of ${m.totalNonTrial} success excl. trial`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalPrevEnded} previously ended`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalNonTrial} success excl. trial`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'upgrade', label: 'Up Selling', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalNonTrial} success excl. trial`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} previously in trial`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'trial', label: 'Ongoing Trial', val: m.ongoingTrial, sub: 'Active trial packages', icon: I.trial, fEnd: (v) => String(v), barColor: 'var(--warning)' },
           { key: 'rev', label: 'Total Revenue', val: m.totalRevenue, sub: 'All records sum', icon: I.revenue, fEnd: Utils.formatIDR, barColor: 'var(--success)' },
         ];
 
         $kpi.innerHTML = cards.map((c, i) => {
           return `
-          <div class="kpi-card rounded-xl p-4" title="${c.sub}">
-            <div class="flex items-center gap-2 mb-2">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background:var(--accent-bg);color:var(--accent);">${c.icon}</div>
-              <span class="text-xs font-medium" style="color:var(--text-sec);">${c.label}</span>
-            </div>
-            <div class="font-display font-bold text-xl tracking-tight" style="color:var(--text);" id="kv-${i}">-</div>
-            <div class="kpi-bar"><div class="kpi-bar-fill" id="kb-${i}" style="width:0%;background:${c.barColor};"></div></div>
-          </div>`;
+  <div class="kpi-card rounded-xl p-4" title="${c.sub}">
+    <div class="flex items-center gap-2 mb-2">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background:var(--accent-bg);color:var(--accent);">${c.icon}</div>
+      <span class="text-xs font-medium" style="color:var(--text-sec);">${c.label}</span>
+    </div>
+    <div class="font-display font-bold text-xl tracking-tight" style="color:var(--text);" id="kv-${i}">-</div>
+    <div class="mt-1.5 mb-0.5">
+      <span class="text-[0.62rem] font-medium" style="color:var(--text-muted);" id="ks-${i}">${c.sub}</span>
+    </div>
+    <div class="kpi-bar"><div class="kpi-bar-fill" id="kb-${i}" style="width:0%;background:${c.barColor};"></div></div>
+  </div>`;
         }).join('');
 
         requestAnimationFrame(() => {
