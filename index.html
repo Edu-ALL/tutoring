@@ -668,7 +668,7 @@
 
           <!-- Opsi Baru -->
           <option value="all_success">All Success Program</option>
-          <option value="all_non_trial">All Non Trial Program</option>
+          <option value="all_non_trial">All Success Non Trial Program</option>
           <option value="all_prev_ended">All Prev Ended Program</option>
           <option value="all_prev_trial">All Prev Trial Program</option>
         </select>
@@ -843,8 +843,11 @@
 
     const isDepositTrial = (pkg) => {
       if (!pkg) return false;
-      return String(pkg).toLowerCase().includes('deposit trial');
+
+      const value = String(pkg).toLowerCase();
+      return value.includes('deposit trial') || value.includes('free trial');
     };
+
 
     const CHART_PALETTE = [
       '#6366F1', '#06B6D4', '#F59E0B', '#10B981', '#EF4444',
@@ -1257,6 +1260,22 @@
         const nonTrialData = data.filter(r => !isDepositTrial(r[CONFIG.PACKAGE_FIELD]));
         const totalNonTrial = Math.max(nonTrialData.length, 1);
 
+        const successNonTrial = nonTrialData.filter(r => {
+          if (!r.success_date) return false;
+
+          if (State.periodMode === 'all') return true;
+
+          return PeriodHelper.matches(
+            r,
+            'success_date',
+            State.periodMode,
+            State.periodValue
+          );
+        });
+
+        const totalSuccessNonTrial = Math.max(successNonTrial.length, 1);
+
+
         const prevTrialData = data.filter(r => isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD]));
         const totalPrevTrial = Math.max(prevTrialData.length, 1);
 
@@ -1271,16 +1290,16 @@
         const renewalRate = (renewals / totalPrevEnded) * 100;
 
         const newRecs = nonTrialData.filter(r => Number(r.is_new) === 1).length;
-        const newRate = (newRecs / totalNonTrial) * 100;
+        const newRate = (newRecs / totalSuccessNonTrial) * 100;
 
         const upgrades = nonTrialData.filter(r => Number(r.is_tier_upgrade) === 1).length;
-        const upgradeRate = (upgrades / totalNonTrial) * 100;
+        const upgradeRate = (upgrades / totalSuccessNonTrial) * 100;
 
         const converted = prevTrialData.filter(r => Number(r.is_trial_conversion) === 1).length;
         const convRate = (converted / totalPrevTrial) * 100;
 
         const crossSells = nonTrialData.filter(r => Number(r.is_cross_sell) === 1).length;
-        const crossRate = (crossSells / totalNonTrial) * 100;
+        const crossRate = (crossSells / totalSuccessNonTrial) * 100;
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -1305,7 +1324,7 @@
           ongoingTrial, totalRevenue,
           renewalCount: renewals, newCount: newRecs,
           upgradeCount: upgrades, crossCount: crossSells,
-          convCount: converted, totalNonTrial, totalPrevTrial, totalPrevEnded,
+          convCount: converted, totalNonTrial, totalPrevTrial, totalPrevEnded, totalSuccessNonTrial,
         };
       };
       return { calculate };
@@ -1363,10 +1382,10 @@
 
       const renderKPIs = (m) => {
         const cards = [
-          { key: 'new', label: 'New Rate', val: m.newRate, sub: `${m.newCount} of ${m.totalNonTrial} success excl. trial`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'new', label: 'New Rate', val: m.newRate, sub: `${m.newCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalPrevEnded} previously ended`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalNonTrial} success excl. trial`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'upgrade', label: 'Up Selling', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalNonTrial} success excl. trial`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'upgrade', label: 'Up Selling', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} previously in trial`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'trial', label: 'Ongoing Trial', val: m.ongoingTrial, sub: 'Active trial packages', icon: I.trial, fEnd: (v) => String(v), barColor: 'var(--warning)' },
           { key: 'rev', label: 'Total Revenue', val: m.totalRevenue, sub: 'All records sum', icon: I.revenue, fEnd: Utils.formatIDR, barColor: 'var(--success)' },
@@ -1636,7 +1655,18 @@
             }
           }
           else if (categoryFilter === 'all_non_trial') {
-            result = result.filter(r => !isDepositTrial(r[CONFIG.PACKAGE_FIELD]));
+            result = result.filter(r => {
+              if (isDepositTrial(r[CONFIG.PACKAGE_FIELD])) return false;
+
+              if (periodMode === 'all') return true;
+
+              return PeriodHelper.matches(
+                r,
+                'success_date',
+                periodMode,
+                periodValue
+              );
+            });
           }
           else if (categoryFilter === 'all_prev_ended') {
             result = result.filter(r => {
