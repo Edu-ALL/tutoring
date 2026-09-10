@@ -692,6 +692,7 @@
       FETCH_TIMEOUT: 15000,
 
       EXPIRING_THRESHOLD: 0.2,
+      EXPIRING_HOURS: 2,
 
       COLUMNS: [
         { key: 'timesheet_id', label: 'Timesheet ID', type: 'id', sticky: false },
@@ -1034,7 +1035,7 @@
        ══════════════════════════════════════════════════════════════ */
     const MetricEngine = (() => {
       const calculate = (data) => {
-        const threshold = CONFIG.EXPIRING_THRESHOLD;
+        const threshold = CONFIG.EXPIRING_HOURS;
         const active = data.filter(r => Number(r.is_active) === 1);
         const inactive = data.filter(r => Number(r.is_active) !== 1);
 
@@ -1045,7 +1046,7 @@
           const dur = Number(r.duration) || 0;
           const rem = Number(r.remaining_time);
           if (dur <= 0 || rem <= 0) return false;
-          return rem <= dur * threshold;
+          return rem <= 60 * threshold;
         }).length;
 
         return {
@@ -1121,18 +1122,18 @@
       const clearKPI = () => { $kpi.innerHTML = ''; };
 
       const renderKPIs = (m) => {
-        const pctThreshold = Math.round(CONFIG.EXPIRING_THRESHOLD * 100);
+        const pctThreshold = Math.round(CONFIG.EXPIRING_HOURS * 60);
         const tooltips = {
           active_packages: 'Number of timesheet records currently marked as active.',
           active_students: 'Number of unique students with at least one active program package.',
-          expiring_soon: `Active packages where remaining time is \u2264${pctThreshold}% of total duration.`,
+          expiring_soon: `Active packages where remaining time is \u2264${pctThreshold} minutes of total duration.`,
           completed: 'Number of timesheet records marked as inactive.',
         };
 
         const cards = [
           { key: 'active_packages', label: 'Active Packages', val: m.activePackages, sub: `${m.totalRecords} total records`, icon: KI.pkg, iconClass: '', fEnd: v => Math.round(v).toLocaleString('id-ID') },
           { key: 'active_students', label: 'Active Students', val: m.activeStudents, sub: 'Unique active students', icon: KI.student, iconClass: '', fEnd: v => Math.round(v).toLocaleString('id-ID') },
-          { key: 'expiring_soon', label: 'Expiring Soon', val: m.expiringSoon, sub: `\u2264${pctThreshold}% time remaining`, icon: KI.expiring, iconClass: 'kpi-warning-icon', fEnd: v => Math.round(v).toLocaleString('id-ID') },
+          { key: 'expiring_soon', label: 'Expiring Soon', val: m.expiringSoon, sub: `\u2264${pctThreshold} minutes remaining`, icon: KI.expiring, iconClass: 'kpi-warning-icon', fEnd: v => Math.round(v).toLocaleString('id-ID') },
           { key: 'completed', label: 'Completed', val: m.completedPackages, sub: 'Inactive packages', icon: KI.done, iconClass: '', fEnd: v => Math.round(v).toLocaleString('id-ID') },
         ];
 
@@ -1319,7 +1320,7 @@
             const dur = Number(r.duration) || 0;
             const rem = Number(r.remaining_time);
             if (dur <= 0 || rem <= 0) return false;
-            return rem <= dur * CONFIG.EXPIRING_THRESHOLD;
+            return rem <= 60 * CONFIG.EXPIRING_HOURS;
           });
         }
 
