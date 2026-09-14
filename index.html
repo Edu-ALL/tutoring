@@ -1280,9 +1280,23 @@
         const totalPrevTrial = Math.max(prevTrialData.length, 1);
 
         const prevEndedPrograms = nonTrialData.filter(r => {
-          return r.previous_program_end_date &&
-            !isNaN(new Date(r.previous_program_end_date).getTime());
+          if (
+            !r.previous_program_end_date ||
+            isNaN(new Date(r.previous_program_end_date).getTime())
+          ) {
+            return false;
+          }
+
+          if (State.periodMode === 'all') return true;
+
+          return PeriodHelper.matches(
+            r,
+            'previous_program_end_date',
+            State.periodMode,
+            State.periodValue
+          );
         });
+
 
         const totalPrevEnded = Math.max(prevEndedPrograms.length, 1);
 
@@ -1670,13 +1684,38 @@
           }
           else if (categoryFilter === 'all_prev_ended') {
             result = result.filter(r => {
-              return !isDepositTrial(r[CONFIG.PACKAGE_FIELD]) &&
-                r.previous_program_end_date &&
-                !isNaN(new Date(r.previous_program_end_date).getTime());
+              if (isDepositTrial(r[CONFIG.PACKAGE_FIELD])) return false;
+
+              if (
+                !r.previous_program_end_date ||
+                isNaN(new Date(r.previous_program_end_date).getTime())
+              ) {
+                return false;
+              }
+
+              if (periodMode === 'all') return true;
+
+              return PeriodHelper.matches(
+                r,
+                'previous_program_end_date',
+                periodMode,
+                periodValue
+              );
             });
           }
           else if (categoryFilter === 'all_prev_trial') {
-            result = result.filter(r => isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD]));
+            result = result.filter(r => {
+              if (!isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD])) return false;
+
+              if (periodMode === 'all') return true;
+
+              return PeriodHelper.matches(
+                r,
+                'previous_program_end_date',
+                periodMode,
+                periodValue
+              );
+            });
           }
         }
 
