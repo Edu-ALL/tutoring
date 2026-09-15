@@ -1425,7 +1425,7 @@
           { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalEndedProgram} ended programs`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'upgrade', label: 'Up Selling', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} previously in trial`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} ended trial programs`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'trial', label: 'Ongoing Trial', val: m.ongoingTrial, sub: 'Active trial packages', icon: I.trial, fEnd: (v) => String(v), barColor: 'var(--warning)' },
           { key: 'rev', label: 'Total Revenue', val: m.totalRevenue, sub: 'All records sum', icon: I.revenue, fEnd: Utils.formatIDR, barColor: 'var(--success)' },
         ];
