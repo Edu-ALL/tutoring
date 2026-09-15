@@ -669,8 +669,8 @@
           <!-- Opsi Baru -->
           <option value="all_success">All Success Program</option>
           <option value="all_non_trial">All Success Non Trial Program</option>
-          <option value="all_prev_ended">All Prev Ended Program</option>
-          <option value="all_prev_trial">All Prev Trial Program</option>
+          <option value="all_ended">All Ended Program</option>
+          <option value="all_ended_trial">All Ended Trial Program</option>
         </select>
         <select id="filter-mentee" aria-label="Filter by Mentee Status"
           class="filter-select px-3 py-[7px] rounded-lg text-xs border outline-none cursor-pointer transition-colors">
@@ -1257,7 +1257,8 @@
     /* ═════════════ METRIC ENGINE ═════════════ */
     const MetricEngine = (() => {
       const calculate = (data) => {
-        const nonTrialData = data.filter(r => !isDepositTrial(r[CONFIG.PACKAGE_FIELD]));
+        const nonTrialData = data.filter(r => !isDepositTrial(r[CONFIG.PACKAGE_FIELD]))
+
         const totalNonTrial = Math.max(nonTrialData.length, 1);
 
         const successNonTrial = nonTrialData.filter(r => {
@@ -1276,13 +1277,25 @@
         const totalSuccessNonTrial = Math.max(successNonTrial.length, 1);
 
 
-        const prevTrialData = data.filter(r => isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD]));
-        const totalPrevTrial = Math.max(prevTrialData.length, 1);
+        const trialEnded = data.filter(r => isDepositTrial(r[CONFIG.PACKAGE_FIELD]));
+        const trialEndedPrograms = trialEnded.filter(r => {
+          if (!r.prog_end_date) return false;
 
-        const prevEndedPrograms = nonTrialData.filter(r => {
+          if (State.periodMode === 'all') return true;
+
+          return PeriodHelper.matches(
+            r,
+            'prog_end_date',
+            State.periodMode,
+            State.periodValue
+          );
+        });
+        const totalPrevTrial = Math.max(trialEndedPrograms.length, 1);
+
+        const endedPrograms = nonTrialData.filter(r => {
           if (
-            !r.previous_program_end_date ||
-            isNaN(new Date(r.previous_program_end_date).getTime())
+            !r.prog_end_date ||
+            isNaN(new Date(r.prog_end_date).getTime())
           ) {
             return false;
           }
@@ -1291,28 +1304,40 @@
 
           return PeriodHelper.matches(
             r,
-            'previous_program_end_date',
+            'prog_end_date',
             State.periodMode,
             State.periodValue
           );
         });
 
 
-        const totalPrevEnded = Math.max(prevEndedPrograms.length, 1);
+        const totalEndedProgram = Math.max(endedPrograms.length, 1);
 
-        const renewals = nonTrialData.filter(r => Number(r.is_renew) === 1).length;
-        const renewalRate = (renewals / totalPrevEnded) * 100;
+        const renewals = successNonTrial.filter(r => Number(r.is_renew) === 1).length;
+        const renewalRate = (renewals / totalEndedProgram) * 100;
 
-        const newRecs = nonTrialData.filter(r => Number(r.is_new) === 1).length;
+        const newRecs = successNonTrial.filter(r => Number(r.is_new) === 1).length;
         const newRate = (newRecs / totalSuccessNonTrial) * 100;
 
-        const upgrades = nonTrialData.filter(r => Number(r.is_tier_upgrade) === 1).length;
+        const upgrades = successNonTrial.filter(r => Number(r.is_tier_upgrade) === 1).length;
         const upgradeRate = (upgrades / totalSuccessNonTrial) * 100;
 
+        const prevTrialData = data.filter(r => isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD])).filter(r => {
+          if (!r.success_date) return false;
+
+          if (State.periodMode === 'all') return true;
+
+          return PeriodHelper.matches(
+            r,
+            'success_date',
+            State.periodMode,
+            State.periodValue
+          );
+        });
         const converted = prevTrialData.filter(r => Number(r.is_trial_conversion) === 1).length;
         const convRate = (converted / totalPrevTrial) * 100;
 
-        const crossSells = nonTrialData.filter(r => Number(r.is_cross_sell) === 1).length;
+        const crossSells = successNonTrial.filter(r => Number(r.is_cross_sell) === 1).length;
         const crossRate = (crossSells / totalSuccessNonTrial) * 100;
 
         const today = new Date();
@@ -1338,7 +1363,7 @@
           ongoingTrial, totalRevenue,
           renewalCount: renewals, newCount: newRecs,
           upgradeCount: upgrades, crossCount: crossSells,
-          convCount: converted, totalNonTrial, totalPrevTrial, totalPrevEnded, totalSuccessNonTrial,
+          convCount: converted, totalNonTrial, totalPrevTrial, totalEndedProgram, totalSuccessNonTrial,
         };
       };
       return { calculate };
@@ -1397,7 +1422,7 @@
       const renderKPIs = (m) => {
         const cards = [
           { key: 'new', label: 'New Rate', val: m.newRate, sub: `${m.newCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalPrevEnded} previously ended`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalEndedProgram} ended programs`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'upgrade', label: 'Up Selling', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} previously in trial`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
@@ -1620,7 +1645,7 @@
           // result = result.filter(r => PeriodHelper.matches(r, field, periodMode, periodValue));
           result = result.filter(r =>
             PeriodHelper.matches(r, field, periodMode, periodValue) ||
-            PeriodHelper.matches(r, 'previous_program_end_date', State.periodMode, periodValue)
+            PeriodHelper.matches(r, 'previous_program_end_date', periodMode, periodValue) || PeriodHelper.matches(r, 'prog_end_date', periodMode, periodValue)
           );
         }
 
@@ -1643,15 +1668,15 @@
           const pkg = r => r[CONFIG.PACKAGE_FIELD];
 
           if (categoryFilter === 'new') {
-            result = result.filter(r => Number(r.is_new) === 1);
+            result = result.filter(r => Number(r.is_new) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
           } else if (categoryFilter === 'renewal') {
-            result = result.filter(r => Number(r.is_renew) === 1);
+            result = result.filter(r => Number(r.is_renew) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
           } else if (categoryFilter === 'tier_upgrade') {
-            result = result.filter(r => Number(r.is_tier_upgrade) === 1);
+            result = result.filter(r => Number(r.is_tier_upgrade) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
           } else if (categoryFilter === 'cross_sell') {
-            result = result.filter(r => Number(r.is_cross_sell) === 1);
+            result = result.filter(r => Number(r.is_cross_sell) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
           } else if (categoryFilter === 'trial_conversion') {
-            result = result.filter(r => Number(r.is_trial_conversion) === 1);
+            result = result.filter(r => Number(r.is_trial_conversion) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
           } else if (categoryFilter === 'ongoing_trial') {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -1682,13 +1707,13 @@
               );
             });
           }
-          else if (categoryFilter === 'all_prev_ended') {
+          else if (categoryFilter === 'all_ended') {
             result = result.filter(r => {
               if (isDepositTrial(r[CONFIG.PACKAGE_FIELD])) return false;
 
               if (
-                !r.previous_program_end_date ||
-                isNaN(new Date(r.previous_program_end_date).getTime())
+                !r.prog_end_date ||
+                isNaN(new Date(r.prog_end_date).getTime())
               ) {
                 return false;
               }
@@ -1697,21 +1722,21 @@
 
               return PeriodHelper.matches(
                 r,
-                'previous_program_end_date',
+                'prog_end_date',
                 periodMode,
                 periodValue
               );
             });
           }
-          else if (categoryFilter === 'all_prev_trial') {
+          else if (categoryFilter === 'all_ended_trial') {
             result = result.filter(r => {
-              if (!isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD])) return false;
+              if (!isDepositTrial(r[CONFIG.PACKAGE_FIELD])) return false;
 
               if (periodMode === 'all') return true;
 
               return PeriodHelper.matches(
                 r,
-                'previous_program_end_date',
+                'prog_end_date',
                 periodMode,
                 periodValue
               );
