@@ -15,6 +15,7 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -561,7 +562,7 @@
       <div class="h-6 w-px bg-[var(--border)] mx-1"></div>
     </section>
 
-    <section id="kpi-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4 mt-6"
+    <section id="kpi-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6"
       aria-label="Key metrics"></section>
 
     <section id="error-section" class="hidden mt-10 text-center py-16 rounded-xl border"
@@ -1276,6 +1277,33 @@
 
         const totalSuccessNonTrial = Math.max(successNonTrial.length, 1);
 
+        const prevEndedNonTrial = nonTrialData.filter(r => {
+          if(isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD])) return false;
+
+          if (!r.previous_program_end_date) return false;
+
+          if (State.periodMode === 'all') return true;
+
+          return PeriodHelper.matches(
+            r,
+            'previous_program_end_date',
+            State.periodMode,
+            State.periodValue
+          );
+        });
+
+        const endedNonTrial = nonTrialData.filter(r => {
+          if (!r.previous_program_end_date) return false;
+
+          if (State.periodMode === 'all') return true;
+
+          return PeriodHelper.matches(
+            r,
+            'prog_end_date',
+            State.periodMode,
+            State.periodValue
+          );
+        });
 
         const trialEnded = data.filter(r => isDepositTrial(r[CONFIG.PACKAGE_FIELD]));
         const trialEndedPrograms = trialEnded.filter(r => {
@@ -1310,10 +1338,22 @@
           );
         });
 
+        const totalEndedProgramData = endedPrograms
 
-        const totalEndedProgram = Math.max(endedPrograms.length, 1);
+        const totalEndedProgram = totalEndedProgramData.length;
 
-        const renewals = successNonTrial.filter(r => Number(r.is_renew) === 1).length;
+        const prevEndedTutoring = prevEndedNonTrial.filter(r =>
+          String(r.previous_program || '').toLowerCase().includes('tutoring')
+        );
+
+        const totalEndedTutoring = totalEndedProgramData.filter(r =>
+          String(r.program_name || '').toLowerCase().includes('tutoring')
+        ).length;
+
+        const renewalTutoring = prevEndedTutoring.filter(r => Number(r.is_renew) === 1).length;
+        const renewalTutoringRate = (renewalTutoring / totalEndedTutoring) * 100;
+
+        const renewals = prevEndedNonTrial.filter(r => Number(r.is_renew) === 1).length;
         const renewalRate = (renewals / totalEndedProgram) * 100;
 
         const newRecs = successNonTrial.filter(r => Number(r.is_new) === 1).length;
@@ -1322,19 +1362,20 @@
         const upgrades = successNonTrial.filter(r => Number(r.is_tier_upgrade) === 1).length;
         const upgradeRate = (upgrades / totalSuccessNonTrial) * 100;
 
-        const prevTrialData = data.filter(r => isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD])).filter(r => {
-          if (!r.success_date) return false;
+        const prevEndedTrialData = data.filter(r => isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD])).filter(r => {
+          if (!r.previous_program_end_date) return false;
 
           if (State.periodMode === 'all') return true;
 
           return PeriodHelper.matches(
             r,
-            'success_date',
+            'previous_program_end_date',
             State.periodMode,
             State.periodValue
           );
         });
-        const converted = prevTrialData.filter(r => Number(r.is_trial_conversion) === 1).length;
+
+        const converted = prevEndedTrialData.filter(r => Number(r.is_trial_conversion) === 1).length;
         const convRate = (converted / totalPrevTrial) * 100;
 
         const crossSells = successNonTrial.filter(r => Number(r.is_cross_sell) === 1).length;
@@ -1360,7 +1401,7 @@
 
         return {
           renewalRate, newRate, upgradeRate, convRate, crossRate,
-          ongoingTrial, totalRevenue,
+          ongoingTrial, totalRevenue, renewalTutoringRate, renewalTutoring, totalEndedTutoring,
           renewalCount: renewals, newCount: newRecs,
           upgradeCount: upgrades, crossCount: crossSells,
           convCount: converted, totalNonTrial, totalPrevTrial, totalEndedProgram, totalSuccessNonTrial,
@@ -1423,6 +1464,7 @@
         const cards = [
           { key: 'new', label: 'New Rate', val: m.newRate, sub: `${m.newCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalEndedProgram} ended programs`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'renewalTutoring', label: 'Tutoring Renewal Rate', val: m.renewalTutoringRate, sub: `${m.renewalTutoring} of ${m.totalEndedTutoring} ended tutoring programs`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'upgrade', label: 'Up Selling', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} ended trial programs`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
@@ -1670,7 +1712,17 @@
           if (categoryFilter === 'new') {
             result = result.filter(r => Number(r.is_new) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
           } else if (categoryFilter === 'renewal') {
-            result = result.filter(r => Number(r.is_renew) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
+            result = result
+              .filter(r => Number(r.is_renew) === 1)
+              .filter(r => !isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD]) && !isDepositTrial(r[CONFIG.PACKAGE_FIELD]))
+              .filter(r =>
+                PeriodHelper.matches(
+                  r,
+                  'previous_program_end_date',
+                  periodMode,
+                  periodValue
+                )
+              );
           } else if (categoryFilter === 'tier_upgrade') {
             result = result.filter(r => Number(r.is_tier_upgrade) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
           } else if (categoryFilter === 'cross_sell') {
@@ -1717,6 +1769,13 @@
               ) {
                 return false;
               }
+
+              // if (
+              //   Number(r.is_new) !== 1 &&
+              //   Number(r.is_renew) !== 1
+              // ) {
+              //   return false;
+              // }
 
               if (periodMode === 'all') return true;
 
@@ -1846,17 +1905,25 @@
         }
       };
 
-      const exportCSV = () => {
+      const exportXLSX = () => {
         const data = State.filteredData;
         if (!data.length) { Utils.toast('No data to export', 'error'); return; }
         const cols = State.columns;
-        const hdr = cols.map(c => `"${c.label}"`).join(',');
-        const rows = data.map(r => cols.map(c => { let v = r[c.key]; if (v == null) v = ''; return `"${String(v).replace(/"/g, '""')}"`; }).join(','));
-        const blob = new Blob(['\uFEFF' + [hdr, ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = `package_tracker_${new Date().toISOString().slice(0, 10)}.csv`; a.click();
-        URL.revokeObjectURL(url);
+
+        // Susun data jadi array of arrays (header + rows)
+        const hdr = cols.map(c => c.label);
+        const rows = data.map(r => cols.map(c => {
+          let v = r[c.key];
+          return v == null ? '' : v;
+        }));
+
+        const wsData = [hdr, ...rows];
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+        XLSX.writeFile(wb, `package_tracker_${new Date().toISOString().slice(0, 10)}.xlsx`);
+
         Utils.toast(`${data.length} records exported`, 'success');
       };
 
@@ -1927,7 +1994,7 @@
           try { localStorage.removeItem(CONFIG.CACHE_KEY); } catch (_) { }
           loadData(true);
         });
-        document.getElementById('btn-export').addEventListener('click', exportCSV);
+        document.getElementById('btn-export').addEventListener('click', exportXLSX);
         document.getElementById('btn-theme').addEventListener('click', toggleTheme);
         document.getElementById('btn-retry').addEventListener('click', () => loadData(true));
         document.getElementById('btn-use-cache').addEventListener('click', () => {
