@@ -760,6 +760,10 @@
       DEFAULT_PAGE_SIZE: 10,
       FETCH_TIMEOUT: 15000,
       FILTER_DATE_FIELD: 'success_date',
+      /* Field tanggal untuk menentukan "record masuk periode".
+         TABLE = dipakai filter tabel & KPI; COUNT = angka "N records" di dropdown periode (perilaku lama 2 field). */
+      PERIOD_FIELDS_TABLE: ['success_date', 'previous_program_end_date', 'prog_end_date'],
+      PERIOD_FIELDS_COUNT: ['success_date', 'previous_program_end_date'],
 
       COLUMNS: [
         { key: 'clientprog_id', label: 'Prog ID', type: 'id', sticky: false },
@@ -812,13 +816,29 @@
     const Utils = {
       formatIDR: (val) => 'Rp ' + Math.max(0, Number(val) || 0).toLocaleString('id-ID'),
       formatPct: (val) => (Number(val) || 0).toFixed(1) + '%',
+      compactNum: (v) => v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(0) + 'k' : v,
+      studentName: (r) => (r.student_name || '').trim(),
+      /* Normalisasi nilai tanggal dari Sheets/CRM.
+         - String "YYYY-MM-DD"   -> dibaca apa adanya (tanpa geser timezone)
+         - String ISO + timezone (mis. "2026-08-31T17:00:00.000Z") -> dikonversi ke
+           waktu lokal, sehingga 2026-08-31T17:00:00.000Z tetap tanggal 2026-09-01 (WIB)
+         - Nilai lain -> mengikuti perilaku lama `new Date(val)` */
+      parseDate: (val) => {
+        if (val == null || val === '') return null;
+        if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+        if (typeof val === 'string') {
+          const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(val.trim());
+          if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12, 0, 0);
+        }
+        const d = new Date(val);
+        return isNaN(d.getTime()) ? null : d;
+      },
       formatDate: (val) => {
         if (!val) return '-';
-        const d = new Date(val);
-        if (isNaN(d.getTime())) return String(val);
+        const d = Utils.parseDate(val);
+        if (!d) return String(val);
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       },
-      toNum: (val) => Number(val) || 0,
       debounce: (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; },
       toast: (msg, type = 'info', duration = 4000) => {
         const c = document.getElementById('toast-container');
@@ -837,6 +857,30 @@
           if (p < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
+      },
+      isOngoingTrial: (row) => {
+        if (!isDepositTrial(row[CONFIG.PACKAGE_FIELD])) return false;
+        const end = new Date(row.prog_end_date);
+        if (isNaN(end.getTime())) return false;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return end >= today;
+      },
+      buildMenteeSets: (data) => {
+        const mentee = new Set();
+        const nonMentee = new Set();
+        data.forEach(r => {
+          const name = Utils.studentName(r);
+          if (!name) return;
+          const cat = String(r[CONFIG.CATEGORY_FIELD] || '').trim().toLowerCase();
+          if (cat === 'mentee') {
+            mentee.add(name);
+            nonMentee.delete(name);
+          } else if (!mentee.has(name)) {
+            nonMentee.add(name);
+          }
+        });
+        return { mentee, nonMentee };
       },
       getCssVar: (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim(),
       barColor: (i, sat = 55, lig = 68) => `hsl(${(i * 137.508) % 360}, ${sat}%, ${lig}%)`,
@@ -908,6 +952,40 @@
         grid: Utils.getCssVar('--border'),
       });
 
+      /* Buang chart lama (kalau ada) lalu bikin yang baru */
+      const setChart = (current, ctx, config) => {
+        if (current) current.destroy();
+        return new Chart(ctx, config);
+      };
+
+      /* Tooltip " Label: value (x%)" — dipakai semua doughnut */
+      const pctTooltip = (total) => (c) =>
+        ` ${c.label}: ${c.raw} (${(total > 0 ? (c.raw / total) * 100 : 0).toFixed(1)}%)`;
+
+      /* Opsi dasar doughnut (legend + tooltip %) supaya tidak copy-paste */
+      const doughnutOptions = ({ cutout = '65%', legendPadding = null, tooltipLabel, centerText = null } = {}) => {
+        const colors = getColors();
+        return {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: {
+                color: colors.textSec,
+                boxWidth: 10,
+                font: { size: 10 },
+                ...(legendPadding ? { padding: legendPadding } : {}),
+              }
+            },
+            tooltip: { callbacks: { label: tooltipLabel } },
+            ...(centerText ? { centerText } : {}),
+          }
+        };
+      };
+
       /* ── 1. Program Distribution (Doughnut) ── */
       const updateProgramChart = (data, colorMap) => {
         const ctx = document.getElementById('chart-programs');
@@ -935,8 +1013,8 @@
 
         const colors = labels.map(l => l === 'Others' ? CHART_PALETTE[CHART_PALETTE.length - 1] : (colorMap[l] || '#888'));
 
-        if (chartPrograms) chartPrograms.destroy();
-        chartPrograms = new Chart(ctx, {
+        const total = values.reduce((a, b) => a + b, 0);
+        chartPrograms = setChart(chartPrograms, ctx, {
           type: 'doughnut',
           data: {
             labels,
@@ -947,27 +1025,7 @@
               hoverOffset: 4
             }]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: {
-              legend: {
-                display: true,
-                position: 'bottom',
-                labels: {
-                  color: getColors().textSec,
-                  boxWidth: 10,
-                  font: { size: 10 },
-                }
-              },
-              tooltip: {
-                callbacks: {
-                  label: (c) => ` ${c.label}: ${c.raw} (${((c.raw / values.reduce((a, b) => a + b, 0)) * 100).toFixed(1)}%)`
-                }
-              }
-            }
-          }
+          options: doughnutOptions({ tooltipLabel: pctTooltip(total) })
         });
       };
 
@@ -976,36 +1034,16 @@
         const ctx = document.getElementById('chart-mentee');
         if (!ctx) return;
 
-        // Gunakan Set untuk menyimpan nama siswa yang unik
-        let menteeStudents = new Set();
-        let nonMenteeStudents = new Set();
-
-        data.forEach(r => {
-          const name = (r.student_name || '').trim();
-          if (!name) return; // Skip kalau nama kosong
-
-          const cat = String(r[CONFIG.CATEGORY_FIELD] || '').trim().toLowerCase();
-
-          if (cat === 'mentee') {
-            menteeStudents.add(name);
-            // Kalau dia ternyata sebelumnya sudah kecatat sebagai non-mentee, hapus dari sana
-            nonMenteeStudents.delete(name);
-          } else {
-            // Kalau belum tercatat sebagai mentee, masukkan ke non-mentee
-            if (!menteeStudents.has(name)) {
-              nonMenteeStudents.add(name);
-            }
-          }
-        });
-
-        const mentee = menteeStudents.size;
-        const nonMentee = nonMenteeStudents.size;
+        // Set nama siswa unik (helper sama dipakai filter Mentee di UIController)
+        const sets = Utils.buildMenteeSets(data);
+        const mentee = sets.mentee.size;
+        const nonMentee = sets.nonMentee.size;
 
         const total = mentee + nonMentee;
         const pct = total > 0 ? ((mentee / total) * 100).toFixed(1) : '0.0';
 
-        if (chartMentee) chartMentee.destroy();
-        chartMentee = new Chart(ctx, {
+        const colors = getColors();
+        chartMentee = setChart(chartMentee, ctx, {
           type: 'doughnut',
           data: {
             labels: ['Mentee', 'Non Mentee'],
@@ -1016,39 +1054,19 @@
               hoverOffset: 4
             }]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
+          options: doughnutOptions({
             cutout: '68%',
-            plugins: {
-              legend: {
-                display: true,
-                position: 'bottom',
-                labels: {
-                  color: getColors().textSec,
-                  boxWidth: 10,
-                  font: { size: 10 },
-                  padding: 16
-                }
-              },
-              tooltip: {
-                callbacks: {
-                  label: (c) => {
-                    const t = c.dataset.data.reduce((a, b) => a + b, 0);
-                    return ` ${c.label}: ${c.raw} (${t > 0 ? ((c.raw / t) * 100).toFixed(1) : 0}%)`;
-                  }
-                }
-              },
-              centerText: {
-                text: `${pct}%`,
-                subText: 'Mentee',
-                fontSize: 22,
-                subFontSize: 10,
-                color: getColors().text,
-                subColor: getColors().textSec,
-              }
+            legendPadding: 16,
+            tooltipLabel: pctTooltip(total),
+            centerText: {
+              text: `${pct}%`,
+              subText: 'Mentee',
+              fontSize: 22,
+              subFontSize: 10,
+              color: colors.text,
+              subColor: colors.textSec,
             }
-          }
+          })
         });
       };
 
@@ -1095,8 +1113,7 @@
         const values = sortedKeys.map(k => revByDate[k]);
         const colors = getColors();
 
-        if (chartRevenue) chartRevenue.destroy();
-        chartRevenue = new Chart(ctx, {
+        chartRevenue = setChart(chartRevenue, ctx, {
           type: 'bar',
           data: {
             labels: sortedKeys,
@@ -1110,7 +1127,7 @@
             responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-              y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.textSec, font: { size: 10 }, callback: (v) => v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(0) + 'k' : v } },
+              y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.textSec, font: { size: 10 }, callback: Utils.compactNum } },
               x: { grid: { display: false }, ticks: { color: colors.textSec, font: { size: 10 } } }
             }
           }
@@ -1131,9 +1148,9 @@
         const labels = sorted.map(x => x[0]);
         const values = sorted.map(x => x[1]);
         const colors = labels.map(l => colorMap[l] || '#888');
+        const css = getColors();
 
-        if (chartProgRev) chartProgRev.destroy();
-        chartProgRev = new Chart(ctx, {
+        chartProgRev = setChart(chartProgRev, ctx, {
           type: 'bar',
           data: {
             labels,
@@ -1147,8 +1164,8 @@
             indexAxis: 'y', responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-              x: { beginAtZero: true, grid: { color: getColors().grid }, ticks: { color: getColors().textSec, font: { size: 10 }, callback: (v) => v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(0) + 'k' : v } },
-              y: { grid: { display: false }, ticks: { color: getColors().textSec, font: { size: 10 } } }
+              x: { beginAtZero: true, grid: { color: css.grid }, ticks: { color: css.textSec, font: { size: 10 }, callback: Utils.compactNum } },
+              y: { grid: { display: false }, ticks: { color: css.textSec, font: { size: 10 } } }
             }
           }
         });
@@ -1198,7 +1215,26 @@
         if (!periodValue) return true;
         return extract(row[field], mode) === periodValue;
       };
-      return { extract, label, extractAll, matches };
+      const isValidDate = (val) => !!val && !isNaN(new Date(val).getTime());
+      /**
+       * Cek apakah sebuah row masuk periode aktif untuk field tanggal tertentu.
+       * Menggantikan pola yang tadinya di-copy-paste di banyak tempat:
+       *   if (!row[field]) return false;
+       *   if (State.periodMode === 'all') return true;
+       *   return PeriodHelper.matches(row, field, State.periodMode, State.periodValue);
+       * opts: { mode, periodValue, requireValidDate }
+       */
+      const inPeriod = (row, field, opts = {}) => {
+        const mode = opts.mode || State.periodMode;
+        const periodValue = opts.periodValue !== undefined ? opts.periodValue : State.periodValue;
+        if (!row[field]) return false;
+        if (opts.requireValidDate && !isValidDate(row[field])) return false;
+        if (mode === 'all') return true;
+        return matches(row, field, mode, periodValue);
+      };
+      /* true kalau row masuk periode di salah satu field tanggal yang diberikan */
+      const anyInPeriod = (row, fields, opts) => fields.some(field => inPeriod(row, field, opts));
+      return { extract, label, extractAll, matches, isValidDate, inPeriod, anyInPeriod };
     })();
 
     /* ═════════════ STATE ═════════════ */
@@ -1262,81 +1298,24 @@
 
         const totalNonTrial = Math.max(nonTrialData.length, 1);
 
-        const successNonTrial = nonTrialData.filter(r => {
-          if (!r.success_date) return false;
-
-          if (State.periodMode === 'all') return true;
-
-          return PeriodHelper.matches(
-            r,
-            'success_date',
-            State.periodMode,
-            State.periodValue
-          );
-        });
+        const successNonTrial = nonTrialData.filter(r => PeriodHelper.inPeriod(r, 'success_date'));
 
         const totalSuccessNonTrial = Math.max(successNonTrial.length, 1);
 
         const prevEndedNonTrial = nonTrialData.filter(r => {
-          if(isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD])) return false;
-
-          if (!r.previous_program_end_date) return false;
-
-          if (State.periodMode === 'all') return true;
-
-          return PeriodHelper.matches(
-            r,
-            'previous_program_end_date',
-            State.periodMode,
-            State.periodValue
-          );
+          if (isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD])) return false;
+          return PeriodHelper.inPeriod(r, 'previous_program_end_date');
         });
 
-        const endedNonTrial = nonTrialData.filter(r => {
-          if (!r.previous_program_end_date) return false;
-
-          if (State.periodMode === 'all') return true;
-
-          return PeriodHelper.matches(
-            r,
-            'prog_end_date',
-            State.periodMode,
-            State.periodValue
-          );
-        });
+        const endedNonTrial = nonTrialData.filter(r => PeriodHelper.inPeriod(r, 'prog_end_date'));
 
         const trialEnded = data.filter(r => isDepositTrial(r[CONFIG.PACKAGE_FIELD]));
-        const trialEndedPrograms = trialEnded.filter(r => {
-          if (!r.prog_end_date) return false;
-
-          if (State.periodMode === 'all') return true;
-
-          return PeriodHelper.matches(
-            r,
-            'prog_end_date',
-            State.periodMode,
-            State.periodValue
-          );
-        });
+        const trialEndedPrograms = trialEnded.filter(r => PeriodHelper.inPeriod(r, 'prog_end_date'));
         const totalPrevTrial = Math.max(trialEndedPrograms.length, 1);
 
-        const endedPrograms = nonTrialData.filter(r => {
-          if (
-            !r.prog_end_date ||
-            isNaN(new Date(r.prog_end_date).getTime())
-          ) {
-            return false;
-          }
-
-          if (State.periodMode === 'all') return true;
-
-          return PeriodHelper.matches(
-            r,
-            'prog_end_date',
-            State.periodMode,
-            State.periodValue
-          );
-        });
+        const endedPrograms = nonTrialData.filter(r =>
+          PeriodHelper.inPeriod(r, 'prog_end_date', { requireValidDate: true })
+        );
 
         const totalEndedProgramData = endedPrograms
 
@@ -1362,18 +1341,9 @@
         const upgrades = successNonTrial.filter(r => Number(r.is_tier_upgrade) === 1).length;
         const upgradeRate = (upgrades / totalSuccessNonTrial) * 100;
 
-        const prevEndedTrialData = data.filter(r => isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD])).filter(r => {
-          if (!r.previous_program_end_date) return false;
-
-          if (State.periodMode === 'all') return true;
-
-          return PeriodHelper.matches(
-            r,
-            'previous_program_end_date',
-            State.periodMode,
-            State.periodValue
-          );
-        });
+        const prevEndedTrialData = data
+          .filter(r => isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD]))
+          .filter(r => PeriodHelper.inPeriod(r, 'previous_program_end_date'));
 
         const converted = prevEndedTrialData.filter(r => Number(r.is_trial_conversion) === 1).length;
         const convRate = (converted / totalPrevTrial) * 100;
@@ -1381,22 +1351,14 @@
         const crossSells = successNonTrial.filter(r => Number(r.is_cross_sell) === 1).length;
         const crossRate = (crossSells / totalSuccessNonTrial) * 100;
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const ongoingTrial = data.filter(r => {
-          if (!isDepositTrial(r[CONFIG.PACKAGE_FIELD])) return false;
-          const end = new Date(r.prog_end_date);
-          if (isNaN(end.getTime())) return false;
-          return end >= today;
-        }).length;
+        const ongoingTrial = data.filter(Utils.isOngoingTrial).length;
 
         const totalRevenue = data.reduce((s, r) => {
-          // Kalau mode All Time, langsung jumlahkan semua
-          if (State.periodMode === 'all') return s + (Number(r.revenue_deal) || 0);
-
-          // Kalau bukan All Time, cek apakah success_date masuk di periode aktif
-          const isInPeriod = PeriodHelper.matches(r, 'success_date', State.periodMode, State.periodValue);
-          return isInPeriod ? s + (Number(r.revenue_deal) || 0) : s;
+          // Mode All Time / periode belum dipilih: jumlahkan semua record.
+          // Selain itu: hanya record dengan success_date di periode aktif.
+          const rev = Number(r.revenue_deal) || 0;
+          if (State.periodMode === 'all' || !State.periodValue) return s + rev;
+          return PeriodHelper.inPeriod(r, 'success_date') ? s + rev : s;
         }, 0);
 
         return {
@@ -1418,7 +1380,6 @@
       const $info = document.getElementById('table-info');
       const $pages = document.getElementById('page-numbers');
       const $empty = document.getElementById('empty-state');
-      const $errSec = document.getElementById('error-section');
       const $errMsg = document.getElementById('error-msg');
       const $upd = document.getElementById('last-updated');
       const $btnC = document.getElementById('btn-use-cache');
@@ -1573,10 +1534,7 @@
         if (!periods.length) { $periodSel.innerHTML = '<option value="">No data</option>'; $periodCnt.textContent = '0 records'; return; }
         $periodSel.innerHTML = periods.map(p => `<option value="${p}">${PeriodHelper.label(p, State.periodMode)}</option>`).join('');
         $periodSel.value = State.periodValue || periods[0];
-        const count = State.rawData.filter(r =>
-          PeriodHelper.matches(r, 'success_date', State.periodMode, State.periodValue) ||
-          PeriodHelper.matches(r, 'previous_program_end_date', State.periodMode, State.periodValue)
-        ).length;
+        const count = State.rawData.filter(r => PeriodHelper.anyInPeriod(r, CONFIG.PERIOD_FIELDS_COUNT)).length;
         $periodCnt.textContent = `${count} records`;
       };
 
@@ -1586,6 +1544,8 @@
         $progSel.innerHTML = '<option value="all">All Programs</option>' + sorted.map(p => `<option value="${p}">${p}</option>`).join('');
       };
 
+      const REVENUE_TITLES = { monthly: 'Revenue (Weekly)', quarterly: 'Revenue (Monthly)' };
+
       const renderPeriodTabs = () => {
         document.querySelectorAll('.period-tab').forEach(tab => {
           const isActive = tab.getAttribute('data-period') === State.periodMode;
@@ -1593,28 +1553,26 @@
           tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
         });
         const titleEl = document.getElementById('chart-revenue-title');
-        if (titleEl) {
-          if (State.periodMode === 'monthly') titleEl.textContent = "Revenue (Weekly)";
-          else if (State.periodMode === 'quarterly') titleEl.textContent = "Revenue (Monthly)";
-          else titleEl.textContent = "Revenue (All Time)";
-        }
+        if (titleEl) titleEl.textContent = REVENUE_TITLES[State.periodMode] || 'Revenue (All Time)';
+      };
+
+      const MAIN_SECTIONS = ['controls-section', 'table-section', 'pagination-section', 'charts-section'];
+
+      /* Sembunyikan / tampilkan semua section utama sekaligus */
+      const toggleMainSections = (hidden) => {
+        MAIN_SECTIONS.forEach(id => document.getElementById(id).classList.toggle('hidden', hidden));
       };
 
       const showError = (msg, hasCache) => {
-        $errSecEl.classList.remove('hidden'); $errMsg.textContent = msg;
+        $errSecEl.classList.remove('hidden');
+        $errMsg.textContent = msg;
         $btnC.classList.toggle('hidden', !hasCache);
-        document.getElementById('controls-section').classList.add('hidden');
-        document.getElementById('table-section').classList.add('hidden');
-        document.getElementById('pagination-section').classList.add('hidden');
-        document.getElementById('charts-section').classList.add('hidden');
+        toggleMainSections(true);
       };
 
       const hideError = () => {
         $errSecEl.classList.add('hidden');
-        document.getElementById('controls-section').classList.remove('hidden');
-        document.getElementById('table-section').classList.remove('hidden');
-        document.getElementById('pagination-section').classList.remove('hidden');
-        document.getElementById('charts-section').classList.remove('hidden');
+        toggleMainSections(false);
       };
 
       const setLastUpdated = (ts) => {
@@ -1650,8 +1608,9 @@
         // Gunakan timeFilteredData untuk Chart
         if (timeFilteredData.length > 0) {
           ChartManager.hideSkeletons();
+          // Data chart: hanya success_date di periode aktif (perilaku lama, All Time = semua row)
           const data = State.rawData.filter(r =>
-            PeriodHelper.matches(r, 'success_date', State.periodMode, State.periodValue)
+            PeriodHelper.matches(r, CONFIG.FILTER_DATE_FIELD, State.periodMode, State.periodValue)
           );
           ChartManager.render(data);
         }
@@ -1679,16 +1638,11 @@
       const applyFilters = () => {
         resolvePeriodValue();
         const { periodMode, periodValue, searchQuery, programFilter, categoryFilter, menteeFilter } = State;
-        const field = CONFIG.FILTER_DATE_FIELD;
         let result = State.rawData;
 
         // 1. Time Period
         if (periodMode !== 'all' && periodValue) {
-          // result = result.filter(r => PeriodHelper.matches(r, field, periodMode, periodValue));
-          result = result.filter(r =>
-            PeriodHelper.matches(r, field, periodMode, periodValue) ||
-            PeriodHelper.matches(r, 'previous_program_end_date', periodMode, periodValue) || PeriodHelper.matches(r, 'prog_end_date', periodMode, periodValue)
-          );
+          result = result.filter(r => PeriodHelper.anyInPeriod(r, CONFIG.PERIOD_FIELDS_TABLE));
         }
 
         // Cek apakah datanya benar-benar berubah dari sebelumnya
@@ -1707,129 +1661,58 @@
 
         // 3. Category Filter
         if (categoryFilter !== 'all') {
-          const pkg = r => r[CONFIG.PACKAGE_FIELD];
+          /* Pengganti pola lama `PeriodHelper.matches(...)`: kalau periode belum dipilih,
+             tidak ada filter waktu tambahan (perilaku lama). */
+          const inActivePeriod = (r, f) => !periodValue || PeriodHelper.inPeriod(r, f, { mode: periodMode, periodValue });
 
-          if (categoryFilter === 'new') {
-            result = result.filter(r => Number(r.is_new) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
+          /* Kategori yang hanya beda di kolom flag + success_date */
+          const FLAG_CATEGORIES = {
+            new: 'is_new',
+            tier_upgrade: 'is_tier_upgrade',
+            cross_sell: 'is_cross_sell',
+            trial_conversion: 'is_trial_conversion',
+          };
+
+          if (FLAG_CATEGORIES[categoryFilter]) {
+            const flag = FLAG_CATEGORIES[categoryFilter];
+            result = result.filter(r => Number(r[flag]) === 1 && inActivePeriod(r, 'success_date'));
           } else if (categoryFilter === 'renewal') {
             result = result
               .filter(r => Number(r.is_renew) === 1)
               .filter(r => !isDepositTrial(r[CONFIG.PREV_PACKAGE_FIELD]) && !isDepositTrial(r[CONFIG.PACKAGE_FIELD]))
-              .filter(r =>
-                PeriodHelper.matches(
-                  r,
-                  'previous_program_end_date',
-                  periodMode,
-                  periodValue
-                )
-              );
-          } else if (categoryFilter === 'tier_upgrade') {
-            result = result.filter(r => Number(r.is_tier_upgrade) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
-          } else if (categoryFilter === 'cross_sell') {
-            result = result.filter(r => Number(r.is_cross_sell) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
-          } else if (categoryFilter === 'trial_conversion') {
-            result = result.filter(r => Number(r.is_trial_conversion) === 1).filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
+              .filter(r => inActivePeriod(r, 'previous_program_end_date'));
           } else if (categoryFilter === 'ongoing_trial') {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            result = result.filter(r => {
-              if (!isDepositTrial(pkg(r))) return false;
-              const end = new Date(r.prog_end_date);
-              if (isNaN(end.getTime())) return false;
-              return end >= today;
-            });
+            result = result.filter(Utils.isOngoingTrial);
           } else if (categoryFilter === 'all_success') {
-            if (periodMode === 'all') {
-              result = result; // Tampilkan semua kalau All Time
-            } else {
-              result = result.filter(r => PeriodHelper.matches(r, 'success_date', periodMode, periodValue));
-            }
-          }
-          else if (categoryFilter === 'all_non_trial') {
-            result = result.filter(r => {
-              if (isDepositTrial(r[CONFIG.PACKAGE_FIELD])) return false;
-
-              if (periodMode === 'all') return true;
-
-              return PeriodHelper.matches(
-                r,
-                'success_date',
-                periodMode,
-                periodValue
-              );
-            });
-          }
-          else if (categoryFilter === 'all_ended') {
-            result = result.filter(r => {
-              if (isDepositTrial(r[CONFIG.PACKAGE_FIELD])) return false;
-
-              if (
-                !r.prog_end_date ||
-                isNaN(new Date(r.prog_end_date).getTime())
-              ) {
-                return false;
-              }
-
-              // if (
-              //   Number(r.is_new) !== 1 &&
-              //   Number(r.is_renew) !== 1
-              // ) {
-              //   return false;
-              // }
-
-              if (periodMode === 'all') return true;
-
-              return PeriodHelper.matches(
-                r,
-                'prog_end_date',
-                periodMode,
-                periodValue
-              );
-            });
-          }
-          else if (categoryFilter === 'all_ended_trial') {
-            result = result.filter(r => {
-              if (!isDepositTrial(r[CONFIG.PACKAGE_FIELD])) return false;
-
-              if (periodMode === 'all') return true;
-
-              return PeriodHelper.matches(
-                r,
-                'prog_end_date',
-                periodMode,
-                periodValue
-              );
-            });
+            result = result.filter(r => inActivePeriod(r, 'success_date'));
+          } else if (categoryFilter === 'all_non_trial') {
+            result = result.filter(r =>
+              !isDepositTrial(r[CONFIG.PACKAGE_FIELD]) && inActivePeriod(r, 'success_date')
+            );
+          } else if (categoryFilter === 'all_ended') {
+            result = result.filter(r =>
+              !isDepositTrial(r[CONFIG.PACKAGE_FIELD]) &&
+              PeriodHelper.isValidDate(r.prog_end_date) &&
+              inActivePeriod(r, 'prog_end_date')
+            );
+          } else if (categoryFilter === 'all_ended_trial') {
+            result = result.filter(r =>
+              isDepositTrial(r[CONFIG.PACKAGE_FIELD]) && inActivePeriod(r, 'prog_end_date')
+            );
           }
         }
 
         // 4. Mentee Filter (Hanya mempengaruhi Table)
         if (menteeFilter !== 'all') {
-          const menteeSet = new Set();
-          const nonMenteeSet = new Set();
-
-          // Kumpulkan nama siswa unik berdasarkan status mentee dari data waktu
-          State.timeFilteredData.forEach(r => {
-            const name = (r.student_name || '').trim();
-            if (!name) return;
-            const cat = String(r[CONFIG.CATEGORY_FIELD] || '').trim().toLowerCase();
-
-            if (cat === 'mentee') {
-              menteeSet.add(name);
-              nonMenteeSet.delete(name);
-            } else {
-              if (!menteeSet.has(name)) {
-                nonMenteeSet.add(name);
-              }
-            }
-          });
+          // Set nama siswa unik (helper sama dipakai chart Mentee vs Non Mentee)
+          const { mentee, nonMentee } = Utils.buildMenteeSets(State.timeFilteredData);
 
           // Tentukan set mana yang dipakai untuk filter
-          const targetSet = menteeFilter === 'mentee' ? menteeSet : nonMenteeSet;
+          const targetSet = menteeFilter === 'mentee' ? mentee : nonMentee;
 
           // Filter data tabel berdasarkan nama unik yang ada di targetSet
           result = result.filter(r => {
-            const name = (r.student_name || '').trim();
+            const name = Utils.studentName(r);
             return name && targetSet.has(name);
           });
         }
@@ -1863,6 +1746,28 @@
         });
       };
 
+      /* Terapkan filter lalu render ulang tabel + chart */
+      const refresh = () => { applyFilters(); Renderer.render(); };
+
+      /* Reset state & kontrol filter ke kondisi awal (dipakai loadData dan tombol Use Cache) */
+      const resetViewState = () => {
+        State.sortKey = null; State.sortDir = 'asc';
+        State.searchQuery = ''; State.currentPage = 1;
+        State.pageSize = CONFIG.DEFAULT_PAGE_SIZE;
+        State.periodMode = 'monthly'; State.periodValue = null;
+        State.timeFilteredData = [];
+        State.isTimeChanged = true;
+        State.programFilter = 'all';
+        State.categoryFilter = 'all';
+        State.menteeFilter = 'all';
+
+        document.getElementById('search-input').value = '';
+        document.getElementById('page-size').value = String(CONFIG.DEFAULT_PAGE_SIZE);
+        document.getElementById('filter-program').value = 'all';
+        document.getElementById('filter-category').value = 'all';
+        document.getElementById('filter-mentee').value = 'all';
+      };
+
       const loadData = async (showLoading = true) => {
         if (showLoading) { State.isLoading = true; Renderer.skeletonKPI(); Renderer.skeletonTable(); Renderer.hideError(); Renderer.setLoading(true); }
         try {
@@ -1872,21 +1777,7 @@
 
           Renderer.renderProgramSelect(State.rawData);
 
-          State.sortKey = null; State.sortDir = 'asc';
-          State.searchQuery = ''; State.currentPage = 1;
-          State.pageSize = CONFIG.DEFAULT_PAGE_SIZE;
-          State.periodMode = 'monthly'; State.periodValue = null;
-          State.timeFilteredData = [];
-          State.isTimeChanged = true;
-          State.programFilter = 'all';
-          State.categoryFilter = 'all';
-          State.menteeFilter = 'all';
-
-          document.getElementById('search-input').value = '';
-          document.getElementById('page-size').value = String(CONFIG.DEFAULT_PAGE_SIZE);
-          document.getElementById('filter-program').value = 'all';
-          document.getElementById('filter-category').value = 'all';
-          document.getElementById('filter-mentee').value = 'all';
+          resetViewState();
 
           applyFilters();
           State.isLoading = false;
@@ -1905,6 +1796,33 @@
         }
       };
 
+      /* Nilai satu sel untuk export Excel.
+         Kolom tanggal ditulis sebagai date cell (jam 12:00 waktu lokal) supaya tetap
+         tampil sama seperti di tabel, mis. 2026-09-01 — bukan bergeser jadi
+         2026-08-31T17:00:00.000Z hanya karena nilai aslinya UTC. */
+      const exportCellValue = (row, col) => {
+        const v = row[col.key];
+        if (v == null || v === '') return '';
+        if (col.type === 'date') {
+          const d = Utils.parseDate(v);
+          if (d) return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
+        }
+        return v;
+      };
+
+      /* Format tampilan kolom tanggal di Excel -> yyyy-mm-dd */
+      const applyDateFormats = (ws, cols) => {
+        if (!ws['!ref']) return;
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        cols.forEach((col, ci) => {
+          if (col.type !== 'date') return;
+          for (let ri = range.s.r + 1; ri <= range.e.r; ri++) {
+            const cell = ws[XLSX.utils.encode_cell({ r: ri, c: ci })];
+            if (cell && (cell.t === 'd' || cell.t === 'n')) cell.z = 'yyyy-mm-dd';
+          }
+        });
+      };
+
       const exportXLSX = () => {
         const data = State.filteredData;
         if (!data.length) { Utils.toast('No data to export', 'error'); return; }
@@ -1912,13 +1830,11 @@
 
         // Susun data jadi array of arrays (header + rows)
         const hdr = cols.map(c => c.label);
-        const rows = data.map(r => cols.map(c => {
-          let v = r[c.key];
-          return v == null ? '' : v;
-        }));
+        const rows = data.map(r => cols.map(c => exportCellValue(r, c)));
 
         const wsData = [hdr, ...rows];
         const ws = XLSX.utils.aoa_to_sheet(wsData);
+        applyDateFormats(ws, cols);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
@@ -1940,11 +1856,19 @@
       };
 
       const bindEvents = () => {
+        /* Bind satu <select> filter ke satu field State, lalu refresh */
+        const bindSelect = (id, key, transform = (v) => v) => {
+          document.getElementById(id).addEventListener('change', e => {
+            State[key] = transform(e.target.value);
+            refresh();
+          });
+        };
+
         document.getElementById('search-input').addEventListener('input', Utils.debounce(e => {
-          State.searchQuery = e.target.value; applyFilters(); Renderer.render();
+          State.searchQuery = e.target.value; refresh();
         }, 250));
         document.getElementById('btn-clear-search').addEventListener('click', () => {
-          State.searchQuery = ''; document.getElementById('search-input').value = ''; applyFilters(); Renderer.render();
+          State.searchQuery = ''; document.getElementById('search-input').value = ''; refresh();
         });
 
         document.getElementById('page-size').addEventListener('change', e => {
@@ -1972,23 +1896,14 @@
             const mode = tab.getAttribute('data-period');
             if (mode === State.periodMode) return;
             State.periodMode = mode; State.periodValue = null;
-            applyFilters(); Renderer.render();
+            refresh();
           });
         });
 
-        document.getElementById('period-select').addEventListener('change', e => {
-          State.periodValue = e.target.value || null;
-          applyFilters(); Renderer.render();
-        });
-
-        document.getElementById('filter-program').addEventListener('change', e => {
-          State.programFilter = e.target.value;
-          applyFilters(); Renderer.render();
-        });
-        document.getElementById('filter-category').addEventListener('change', e => {
-          State.categoryFilter = e.target.value;
-          applyFilters(); Renderer.render();
-        });
+        bindSelect('period-select', 'periodValue', v => v || null);
+        bindSelect('filter-program', 'programFilter');
+        bindSelect('filter-category', 'categoryFilter');
+        bindSelect('filter-mentee', 'menteeFilter');
 
         document.getElementById('btn-refresh').addEventListener('click', () => {
           try { localStorage.removeItem(CONFIG.CACHE_KEY); } catch (_) { }
@@ -2002,8 +1917,7 @@
           if (cached) {
             State.rawData = cached; State.columns = detectColumns(cached);
             Renderer.renderProgramSelect(State.rawData);
-            State.searchQuery = ''; State.currentPage = 1;
-            State.periodMode = 'monthly'; State.periodValue = null;
+            resetViewState();
             applyFilters(); Renderer.hideError(); Renderer.render();
             Utils.toast('Loaded from cache', 'info');
           }
@@ -2013,14 +1927,9 @@
           if (e.key === 'Escape') {
             if (document.activeElement?.id === 'search-input') {
               State.searchQuery = ''; document.getElementById('search-input').value = '';
-              applyFilters(); Renderer.render(); document.getElementById('search-input').blur();
+              refresh(); document.getElementById('search-input').blur();
             }
           }
-        });
-
-        document.getElementById('filter-mentee').addEventListener('change', e => {
-          State.menteeFilter = e.target.value;
-          applyFilters(); Renderer.render();
         });
       };
 
