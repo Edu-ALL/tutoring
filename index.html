@@ -1456,8 +1456,8 @@
       const renderKPIs = (m) => {
         const cards = [
           { key: 'new', label: 'New Rate', val: m.newRate, sub: `${m.newCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'renewal', label: 'Renewal Rate', val: m.continuationRate, sub: `${m.continuationCount} of ${m.totalEndedProgram} ended programs (${m.renewedEndedCount} renew + ${m.newEndedCount} new)`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'renewalTutoring', label: 'Tutoring Renewal Rate', val: m.renewalTutoringRate, sub: `${m.renewalTutoring} of ${m.totalEndedTutoring} ended tutoring programs`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalEndedProgram} ended programs`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'renewalTutoring', label: 'Tutoring Renewal Rate', val: m.continuationRate, sub: `${m.continuationCount} of ${m.totalEndedProgram} ended programs (${m.renewedEndedCount} renew + ${m.newEndedCount} new)`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'upgrade', label: 'Up Selling', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} ended trial programs`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
