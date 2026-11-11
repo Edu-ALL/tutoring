@@ -452,7 +452,7 @@
 
   <!-- Info Alert Banner -->
   <div class="border-b" style="background:var(--success-bg);border-color:var(--success-border);">
-    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-2 flex items-center gap-2 text-[0.72rem]"
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-2 flex items-center justify-center gap-2 text-[0.77rem]"
       style="color:var(--success);">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
@@ -651,11 +651,33 @@
     <section id="controls-section"
       class="mt-4 flex flex-row md:flex-nowrap flex-wrap items-start sm:items-center justify-between gap-3">
       <div
-        class="relative flex flex-row md:flex-nowrap flex-wrap w-full gap-1 overflow-x-auto md:justify-start justify-center">
+        class="relative w-full gap-1 overflow-x-auto md:justify-start justify-center grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))] lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))] xl:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] 2xl:grid-cols-[repeat(auto-fit,minmax(220px,1fr))] flex-wrap items-center">
         <select id="filter-program" aria-label="Filter by Program"
           class="filter-select px-3 py-[7px] rounded-lg text-xs border outline-none cursor-pointer transition-colors">
           <option value="all">All Programs</option>
         </select>
+
+        <div class="relative w-full" id="filter-package-wrap">
+          <button type="button" id="filter-package-btn"
+            class="filter-select pl-4 pr-2 py-[7px] rounded-lg text-xs border outline-none cursor-pointer transition-colors flex items-center justify-between gap-2 w-full"
+            aria-haspopup="true" aria-expanded="false">
+            <span id="filter-package-label" class="truncate">All Packages</span>
+            <svg id="filter-package-chevron" class="flex-shrink-0 transition-transform" width="12" height="12"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+          <div id="filter-package-menu" class="hidden fixed rounded-lg border shadow-lg p-1.5 text-xs"
+            style="background:var(--card);border-color:var(--border);color:var(--text);min-width:180px;z-index:60;">
+            <div id="filter-package-options"></div>
+            <div class="mt-1 pt-1 border-t" style="border-color:var(--border);">
+              <button type="button" id="filter-package-clear"
+                class="w-full text-left px-2 py-1.5 rounded transition-colors"
+                style="color:var(--text-sec);">Clear selection</button>
+            </div>
+          </div>
+        </div>
 
         <select id="filter-category" aria-label="Filter by Category"
           class="filter-select px-3 py-[7px] rounded-lg text-xs border outline-none cursor-pointer transition-colors">
@@ -694,8 +716,8 @@
       </div>
 
 
-      <div class="flex items-center gap-3 w-full md:justify-end justify-between">
-        <span id="table-info" class="text-xs" style="color:var(--text-muted);"></span>
+      <div class="flex items-center gap-3 w-fit md:justify-end justify-between">
+        <span id="table-info" class="text-xs text-nowrap" style="color:var(--text-muted);"></span>
         <select id="page-size" aria-label="Rows per page"
           class="px-3 py-2 rounded-lg text-xs border outline-none cursor-pointer transition-colors"
           style="background:var(--card);border-color:var(--border);color:var(--text);">
@@ -775,7 +797,7 @@
         { key: 'previous_program_date', label: 'Prev Program Success Date', type: 'date', sticky: false },
         { key: 'previous_program_end_date', label: 'Prev Program End Date', type: 'date', sticky: false },
         { key: 'program_name', label: 'Program', type: 'text', sticky: false },
-        { key: 'package_name', label: 'Package', type: 'text', sticky: false },
+        { key: 'package', label: 'Package', type: 'text', sticky: false },
         { key: 'success_date', label: 'Success Date', type: 'date', sticky: false },
         { key: 'prog_start_date', label: 'Start Date', type: 'date', sticky: false },
         { key: 'prog_end_date', label: 'End Date', type: 'date', sticky: false },
@@ -791,6 +813,7 @@
       SEARCHABLE_FIELDS: ['student_name', 'program_name', 'prog_name', 'sch_name', 'prog_end_date'],
       PROGRAM_FIELD: 'prog_name',
       PACKAGE_FIELD: 'package',
+      PACKAGE_FILTER_VALUES: ['Elite', 'Pro', 'Basic', 'Hourly', 'Deposit Trial'],
       PREV_PACKAGE_FIELD: 'previous_program',
       CATEGORY_FIELD: 'category',
 
@@ -1253,6 +1276,7 @@
       periodValue: null,
       isLoading: true,
       programFilter: 'all',
+      packageFilter: [],
       categoryFilter: 'all',
       menteeFilter: 'all',
     };
@@ -1332,8 +1356,16 @@
         const renewalTutoring = prevEndedTutoring.filter(r => Number(r.is_renew) === 1).length;
         const renewalTutoringRate = (renewalTutoring / totalEndedTutoring) * 100;
 
+        const continued = endedPrograms.filter(r => 
+          Number(r.is_renew) === 1 || Number(r.is_new) === 1
+        ).length;
+        const continuationRate = (continued / totalEndedProgram) * 100;
+
         const renewals = prevEndedNonTrial.filter(r => Number(r.is_renew) === 1).length;
         const renewalRate = (renewals / totalEndedProgram) * 100;
+
+        const renewedEnded = endedPrograms.filter(r => Number(r.is_renew) === 1).length;
+        const newEnded = endedPrograms.filter(r => Number(r.is_new) === 1).length;
 
         const newRecs = successNonTrial.filter(r => Number(r.is_new) === 1).length;
         const newRate = (newRecs / totalSuccessNonTrial) * 100;
@@ -1362,9 +1394,9 @@
         }, 0);
 
         return {
-          renewalRate, newRate, upgradeRate, convRate, crossRate,
+          renewalRate, continuationRate, newRate, upgradeRate, convRate, crossRate,
           ongoingTrial, totalRevenue, renewalTutoringRate, renewalTutoring, totalEndedTutoring,
-          renewalCount: renewals, newCount: newRecs,
+          renewalCount: renewals, continuationCount: continued, renewedEndedCount: renewedEnded, newEndedCount: newEnded, newCount: newRecs,
           upgradeCount: upgrades, crossCount: crossSells,
           convCount: converted, totalNonTrial, totalPrevTrial, totalEndedProgram, totalSuccessNonTrial,
         };
@@ -1425,7 +1457,7 @@
         const cards = [
           { key: 'new', label: 'New Rate', val: m.newRate, sub: `${m.newCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalEndedProgram} ended programs`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'renewalTutoring', label: 'Tutoring Renewal Rate', val: m.renewalTutoringRate, sub: `${m.renewalTutoring} of ${m.totalEndedTutoring} ended tutoring programs`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'renewalTutoring', label: 'Tutoring Renewal Rate', val: m.continuationRate, sub: `${m.continuationCount} of ${m.totalEndedProgram} ended programs (${m.renewedEndedCount} renew + ${m.newEndedCount} new)`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'upgrade', label: 'Up Selling', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} ended trial programs`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
@@ -1637,12 +1669,19 @@
 
       const applyFilters = () => {
         resolvePeriodValue();
-        const { periodMode, periodValue, searchQuery, programFilter, categoryFilter, menteeFilter } = State;
+        const { periodMode, periodValue, searchQuery, programFilter, packageFilter, categoryFilter, menteeFilter } = State;
         let result = State.rawData;
 
         // 1. Time Period
         if (periodMode !== 'all' && periodValue) {
           result = result.filter(r => PeriodHelper.anyInPeriod(r, CONFIG.PERIOD_FIELDS_TABLE));
+        }
+
+        // 2. Package Filter (multi-select: Elite / Pro / Basic)
+        if (packageFilter.length > 0) {
+          const normalize = (v) => String(v || '').trim().toLowerCase();
+          const selected = new Set(packageFilter.map(normalize));
+          result = result.filter(r => selected.has(normalize(r[CONFIG.PACKAGE_FIELD])));
         }
 
         // Cek apakah datanya benar-benar berubah dari sebelumnya
@@ -1654,12 +1693,12 @@
           State.isTimeChanged = false; // Waktu sama, chart jangan disentuh
         }
 
-        // 2. Program Filter
+        // 3. Program Filter
         if (programFilter !== 'all') {
           result = result.filter(r => r[CONFIG.PROGRAM_FIELD] === programFilter);
         }
 
-        // 3. Category Filter
+        // 4. Category Filter
         if (categoryFilter !== 'all') {
           /* Pengganti pola lama `PeriodHelper.matches(...)`: kalau periode belum dipilih,
              tidak ada filter waktu tambahan (perilaku lama). */
@@ -1702,7 +1741,7 @@
           }
         }
 
-        // 4. Mentee Filter (Hanya mempengaruhi Table)
+        // 5. Mentee Filter (Hanya mempengaruhi Table)
         if (menteeFilter !== 'all') {
           // Set nama siswa unik (helper sama dipakai chart Mentee vs Non Mentee)
           const { mentee, nonMentee } = Utils.buildMenteeSets(State.timeFilteredData);
@@ -1718,7 +1757,7 @@
         }
 
 
-        // 5. Search
+        // 6. Search
         const q = searchQuery.toLowerCase().trim();
         if (q) {
           result = result.filter(r => CONFIG.SEARCHABLE_FIELDS.some(f => String(r[f] || '').toLowerCase().includes(q)));
@@ -1758,12 +1797,17 @@
         State.timeFilteredData = [];
         State.isTimeChanged = true;
         State.programFilter = 'all';
+        State.packageFilter = [];
         State.categoryFilter = 'all';
         State.menteeFilter = 'all';
 
         document.getElementById('search-input').value = '';
         document.getElementById('page-size').value = String(CONFIG.DEFAULT_PAGE_SIZE);
         document.getElementById('filter-program').value = 'all';
+        document.querySelectorAll('#filter-package-options input[type="checkbox"]').forEach(cb => {
+          cb.checked = false;
+        });
+        document.getElementById('filter-package-label').textContent = 'All Packages';
         document.getElementById('filter-category').value = 'all';
         document.getElementById('filter-mentee').value = 'all';
       };
@@ -1864,6 +1908,84 @@
           });
         };
 
+        /* Multi-select Package Filter */
+        const pkgBtn = document.getElementById('filter-package-btn');
+        const pkgMenu = document.getElementById('filter-package-menu');
+        const pkgLabel = document.getElementById('filter-package-label');
+        const pkgChevron = document.getElementById('filter-package-chevron');
+        const pkgOptions = document.getElementById('filter-package-options');
+        const pkgClear = document.getElementById('filter-package-clear');
+
+        pkgOptions.innerHTML = CONFIG.PACKAGE_FILTER_VALUES.map(p => `
+          <label class="flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-[var(--card-hover)]">
+            <input type="checkbox" data-package="${p}" class="accent-[var(--accent)] cursor-pointer">
+            <span>${p}</span>
+          </label>
+        `).join('');
+
+        const updatePackageLabel = () => {
+          pkgLabel.textContent = State.packageFilter.length > 0
+            ? State.packageFilter.join(', ')
+            : 'All Packages';
+        };
+
+        const positionPackageMenu = () => {
+          const rect = pkgBtn.getBoundingClientRect();
+          const width = Math.max(rect.width, 180);
+          const left = Math.min(rect.left, window.innerWidth - width - 8);
+          pkgMenu.style.top = `${rect.bottom + 4}px`;
+          pkgMenu.style.left = `${Math.max(8, left)}px`;
+          pkgMenu.style.width = `${width}px`;
+        };
+
+        const closePackageMenu = () => {
+          pkgMenu.classList.add('hidden');
+          pkgBtn.setAttribute('aria-expanded', 'false');
+          pkgChevron.style.transform = '';
+        };
+
+        const openPackageMenu = () => {
+          positionPackageMenu();
+          pkgMenu.classList.remove('hidden');
+          pkgBtn.setAttribute('aria-expanded', 'true');
+          pkgChevron.style.transform = 'rotate(180deg)';
+        };
+
+        pkgBtn.addEventListener('click', () => {
+          if (pkgMenu.classList.contains('hidden')) openPackageMenu();
+          else closePackageMenu();
+        });
+
+        pkgOptions.addEventListener('change', e => {
+          if (!e.target.matches('input[type="checkbox"][data-package]')) return;
+          State.packageFilter = [...pkgOptions.querySelectorAll('input[type="checkbox"]:checked')]
+            .map(el => el.getAttribute('data-package'));
+          updatePackageLabel();
+          refresh();
+        });
+
+        pkgClear.addEventListener('click', () => {
+          pkgOptions.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; });
+          State.packageFilter = [];
+          updatePackageLabel();
+          refresh();
+          closePackageMenu();
+        });
+
+        document.addEventListener('click', e => {
+          if (pkgMenu.classList.contains('hidden')) return;
+          if (pkgMenu.contains(e.target) || pkgBtn.contains(e.target)) return;
+          closePackageMenu();
+        });
+
+        window.addEventListener('resize', () => {
+          if (!pkgMenu.classList.contains('hidden')) positionPackageMenu();
+        });
+
+        window.addEventListener('scroll', () => {
+          if (!pkgMenu.classList.contains('hidden')) closePackageMenu();
+        }, true);
+
         document.getElementById('search-input').addEventListener('input', Utils.debounce(e => {
           State.searchQuery = e.target.value; refresh();
         }, 250));
@@ -1925,6 +2047,7 @@
 
         document.addEventListener('keydown', e => {
           if (e.key === 'Escape') {
+            closePackageMenu();
             if (document.activeElement?.id === 'search-input') {
               State.searchQuery = ''; document.getElementById('search-input').value = '';
               refresh(); document.getElementById('search-input').blur();
