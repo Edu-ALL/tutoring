@@ -399,6 +399,63 @@
       transform: translateY(-1px);
     }
 
+    .kpi-info {
+      margin-left: auto;
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 0;
+      border-radius: 9999px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: help;
+    }
+
+    .kpi-info:hover,
+    .kpi-info:focus-visible {
+      color: var(--accent);
+      background: var(--accent-bg);
+      outline: none;
+    }
+
+    .kpi-tooltip {
+      position: fixed;
+      z-index: 90;
+      max-width: 360px;
+      padding: 10px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      background: var(--card);
+      color: var(--text);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+      font-size: 0.72rem;
+      line-height: 1.45;
+      text-align: left;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(4px);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+      pointer-events: none;
+    }
+
+    .kpi-tooltip.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .kpi-tooltip strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .kpi-tooltip .tip-sec {
+      color: var(--text-sec);
+    }
+
     .filter-select {
       background: var(--card);
       border-color: var(--border);
@@ -771,6 +828,8 @@
   </main>
 
   <div id="toast-container"></div>
+
+  <div id="kpi-tooltip" class="kpi-tooltip" role="tooltip" aria-hidden="true"></div>
 
   <script>
     'use strict';
@@ -1279,6 +1338,8 @@
       packageFilter: [],
       categoryFilter: 'all',
       menteeFilter: 'all',
+      timeFilteredData: [],
+      timeOnlyData: [],
     };
 
     /* ═════════════ DATA SERVICE ═════════════ */
@@ -1317,7 +1378,7 @@
 
     /* ═════════════ METRIC ENGINE ═════════════ */
     const MetricEngine = (() => {
-      const calculate = (data) => {
+      const calculate = (data, timeOnlyData = data) => {
         const nonTrialData = data.filter(r => !isDepositTrial(r[CONFIG.PACKAGE_FIELD]))
 
         const totalNonTrial = Math.max(nonTrialData.length, 1);
@@ -1361,6 +1422,23 @@
         ).length;
         const continuationRate = (continued / totalEndedProgram) * 100;
 
+        const isEliteProBasic = (p) => ['elite', 'pro', 'basic'].includes(String(p || '').toLowerCase());
+        const tutoringScopeEnded = timeOnlyData.filter(r =>
+          !isDepositTrial(r[CONFIG.PACKAGE_FIELD]) &&
+          isEliteProBasic(r[CONFIG.PACKAGE_FIELD]) && 
+          String(r.program_name || '').toLowerCase().includes('tutoring') &&
+          PeriodHelper.inPeriod(r, 'prog_end_date', { requireValidDate: true })
+        );
+        const tutoringScopeContinued = tutoringScopeEnded.filter(r =>
+          Number(r.is_renew) === 1 || Number(r.is_new) === 1
+        ).length;
+        const tutoringScopeRenewed = tutoringScopeEnded.filter(r => Number(r.is_renew) === 1).length;
+        const tutoringScopeNew = tutoringScopeEnded.filter(r => Number(r.is_new) === 1).length;
+        const tutoringScopeTotal = tutoringScopeEnded.length;
+        const tutoringScopeRate = tutoringScopeTotal
+          ? (tutoringScopeContinued / tutoringScopeTotal) * 100
+          : 0;
+
         const renewals = prevEndedNonTrial.filter(r => Number(r.is_renew) === 1).length;
         const renewalRate = (renewals / totalEndedProgram) * 100;
 
@@ -1397,6 +1475,7 @@
           renewalRate, continuationRate, newRate, upgradeRate, convRate, crossRate,
           ongoingTrial, totalRevenue, renewalTutoringRate, renewalTutoring, totalEndedTutoring,
           renewalCount: renewals, continuationCount: continued, renewedEndedCount: renewedEnded, newEndedCount: newEnded, newCount: newRecs,
+          tutoringScopeRate, tutoringScopeTotal, tutoringScopeContinued, tutoringScopeRenewed, tutoringScopeNew,
           upgradeCount: upgrades, crossCount: crossSells,
           convCount: converted, totalNonTrial, totalPrevTrial, totalEndedProgram, totalSuccessNonTrial,
         };
@@ -1434,6 +1513,7 @@
         srtN: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.3"><polyline points="8 6 12 2 16 6"/><polyline points="8 18 12 22 16 18"/></svg>`,
         chk: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
         crs: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+        info: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="11"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
       };
 
       const skeletonKPI = () => {
@@ -1452,12 +1532,145 @@
       };
 
       const clearKPI = () => { $kpi.innerHTML = ''; };
+      const Tooltip = (() => {
+        const el = () => document.getElementById('kpi-tooltip');
+        let current = null;
+        let timer = null;
+
+        const position = (trigger) => {
+          const tip = el(); if (!tip) return;
+          const r = trigger.getBoundingClientRect();
+          tip.style.left = '0px'; tip.style.top = '0px';
+          const t = tip.getBoundingClientRect();
+          let left = r.left + r.width / 2 - t.width / 2;
+          left = Math.max(8, Math.min(left, window.innerWidth - t.width - 8));
+          let top = r.top - t.height - 8;
+          if (top < 8) top = r.bottom + 8;
+          tip.style.left = left + 'px';
+          tip.style.top = top + 'px';
+        };
+
+        const show = (trigger, html) => {
+          const tip = el(); if (!tip) return;
+          tip.innerHTML = html;
+          tip.classList.add('show');
+          tip.setAttribute('aria-hidden', 'false');
+          current = trigger;
+          position(trigger);
+        };
+
+        const hide = () => {
+          const tip = el(); if (!tip) return;
+          tip.classList.remove('show');
+          tip.setAttribute('aria-hidden', 'true');
+          current = null;
+        };
+
+        const bind = (getTips) => {
+          const root = document.getElementById('kpi-section');
+          if (!root) return;
+          root.addEventListener('mouseover', (e) => {
+            const btn = e.target.closest('.kpi-info'); if (!btn) return;
+            clearTimeout(timer);
+            timer = setTimeout(() => show(btn, getTips()[btn.dataset.tipKey] || ''), 150);
+          });
+          root.addEventListener('mouseout', (e) => {
+            const btn = e.target.closest('.kpi-info');
+            if (e.target.closest('.kpi-info')) { clearTimeout(timer); hide(); }
+          });
+          root.addEventListener('focusin', (e) => {
+            const btn = e.target.closest('.kpi-info');
+            if (btn) show(btn, getTips()[btn.dataset.tipKey] || '');
+          });
+          root.addEventListener('focusout', (e) => {
+            if (e.target.closest('.kpi-info')) hide();
+          });
+          root.addEventListener('click', (e) => {
+            const btn = e.target.closest('.kpi-info');
+            if (!btn) return;
+            e.stopPropagation();
+            if (current === btn) hide();
+            else show(btn, getTips()[btn.dataset.tipKey] || '');
+          });
+          document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+          document.addEventListener('click', (e) => {
+            if (!e.target.closest('.kpi-info')) hide();
+          });
+          window.addEventListener('scroll', hide, { passive: true });
+          window.addEventListener('resize', hide);
+        };
+
+        return { bind, hide };
+      })();
+
+      let currentTips = {};
+      Tooltip.bind(() => currentTips);
 
       const renderKPIs = (m) => {
+        const periodLabel = (State.periodMode === 'all' || !State.periodValue)
+          ? 'semua periode'
+          : PeriodHelper.label(State.periodValue, State.periodMode)
+              .replace(/^([A-Za-z]{3})/, (x) => ({
+                Jan: 'Januari', Feb: 'Februari', Mar: 'Maret', Apr: 'April',
+                May: 'Mei', Jun: 'Juni', Jul: 'Juli', Aug: 'Agustus',
+                Sep: 'September', Oct: 'Oktober', Nov: 'November', Dec: 'Desember'
+              }[x] || x));
+
+        const packageLabel = State.packageFilter.length
+          ? State.packageFilter.join(', ')
+          : 'Semua package';
+
+        currentTips = {
+          renewal: `
+            <div><strong>Renewal Rate</strong></div>
+            <div class="tip-sec">Renewal program yang berakhir di ${periodLabel}.</div>
+
+            <div style="margin-top:6px">
+              Rumus: ${m.renewalCount} / ${m.totalEndedProgram} * 100 =
+              <strong>${Utils.formatPct(m.renewalRate)}</strong>
+            </div>
+
+            <div class="tip-sec" style="margin-top:6px">
+              <strong>Hasil:</strong><br>
+              &bull; ${m.renewalCount} renewal<br>
+              &bull; ${m.totalEndedProgram} program berakhir<br>
+              &bull; ${m.totalEndedProgram - m.renewalCount} program tanpa renewal (${m.totalEndedProgram} − ${m.renewalCount})<br>
+            </div>
+
+            <div class="tip-sec" style="margin-top:6px">
+              &bull; Hanya renewal murni; new student tidak dihitung.<br>
+              &bull; Dihitung per program, bukan per siswa.<br>
+              &bull; Mengikuti filter Package: ${packageLabel}.
+            </div>`,
+
+          renewalTutoring: `
+            <div><strong>Tutoring Renewal Rate</strong></div>
+            <div class="tip-sec">Program Subject Tutoring (Elite/Pro/Basic) yang berakhir di ${periodLabel}.</div>
+
+            <div style="margin-top:6px">
+              Rumus: (${m.tutoringScopeRenewed} renewal + ${m.tutoringScopeNew} new) / ${m.tutoringScopeTotal} program * 100 =
+              <strong>${Utils.formatPct(m.tutoringScopeRate)}</strong>
+            </div>
+
+            <div class="tip-sec" style="margin-top:6px">
+              <strong>Hasil:</strong><br>
+              &bull; ${m.tutoringScopeContinued} program lanjut = ${m.tutoringScopeRenewed} renewal + ${m.tutoringScopeNew} new<br>
+              &bull; ${m.tutoringScopeTotal} program Subject Tutoring berakhir<br>
+              &bull; ${m.tutoringScopeTotal - m.tutoringScopeContinued} program tidak lanjut (${m.tutoringScopeTotal} - ${m.tutoringScopeContinued})<br>
+            </div>
+
+            <div class="tip-sec" style="margin-top:6px">
+              &bull; Termasuk ${m.tutoringScopeNew} pembelian baru, bukan hanya perpanjangan.<br>
+              &bull; Dihitung per program, bukan per siswa.<br>
+              &bull; Scope tetap: Elite + Pro + Basic · Subject Tutoring.<br>
+              &bull; Tidak terpengaruh filter Package di atas.
+            </div>`
+        };
+
         const cards = [
           { key: 'new', label: 'New Rate', val: m.newRate, sub: `${m.newCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalEndedProgram} ended programs`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
-          { key: 'renewalTutoring', label: 'Tutoring Renewal Rate', val: m.continuationRate, sub: `${m.continuationCount} of ${m.totalEndedProgram} ended programs (${m.renewedEndedCount} renew + ${m.newEndedCount} new)`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
+          { key: 'renewal', label: 'Renewal Rate', val: m.renewalRate, sub: `${m.renewalCount} of ${m.totalEndedProgram} ended programs`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)', tip: true },
+          { key: 'renewalTutoring', label: 'Tutoring Renewal Rate', val: m.tutoringScopeRate, sub: `${m.tutoringScopeContinued} of ${m.tutoringScopeTotal} tutoring programs (${m.tutoringScopeRenewed} renew + ${m.tutoringScopeNew} new)`, icon: I.renew, fEnd: Utils.formatPct, barColor: 'var(--accent)', tip: true },
           { key: 'cross', label: 'Cross Selling', val: m.crossRate, sub: `${m.crossCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.cross, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'upgrade', label: 'Up Selling', val: m.upgradeRate, sub: `${m.upgradeCount} of ${m.totalSuccessNonTrial} success excl. trial`, icon: I.upgrade, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
           { key: 'conv', label: 'Trial Conv.', val: m.convRate, sub: `${m.convCount} of ${m.totalPrevTrial} ended trial programs`, icon: I.convert, fEnd: Utils.formatPct, barColor: 'var(--accent)' },
@@ -1467,10 +1680,11 @@
 
         $kpi.innerHTML = cards.map((c, i) => {
           return `
-  <div class="kpi-card rounded-xl p-4" title="${c.sub}">
+  <div class="kpi-card rounded-xl p-4">
     <div class="flex items-center gap-2 mb-2">
       <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background:var(--accent-bg);color:var(--accent);">${c.icon}</div>
       <span class="text-xs font-medium" style="color:var(--text-sec);">${c.label}</span>
+      ${c.tip ? `<button type="button" class="kpi-info" data-tip-key="${c.key}" aria-label="Penjelasan ${c.label}">${I.info}</button>` : ''}
     </div>
     <div class="font-display font-bold text-xl tracking-tight" style="color:var(--text);" id="kv-${i}">-</div>
     <div class="mt-1.5 mb-0.5">
@@ -1625,7 +1839,7 @@
 
         // KPI juga cuma update kalau waktu berubah
         if (isTimeChanged) {
-          renderKPIs(MetricEngine.calculate(timeFilteredData));
+          renderKPIs(MetricEngine.calculate(timeFilteredData, State.timeOnlyData));
         }
 
         // Gunakan filteredData untuk Table
@@ -1676,6 +1890,8 @@
         if (periodMode !== 'all' && periodValue) {
           result = result.filter(r => PeriodHelper.anyInPeriod(r, CONFIG.PERIOD_FIELDS_TABLE));
         }
+
+        State.timeOnlyData = result; // Simpan data yang hanya difilter waktu, untuk chart
 
         // 2. Package Filter (multi-select: Elite / Pro / Basic)
         if (packageFilter.length > 0) {
